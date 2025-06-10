@@ -1,11 +1,12 @@
 package com.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Book {
     public int id;
-    public int categoryId;
-    public Set<Integer> keywordIds;
+    public int category;
+    public Set<String> keywords = new HashSet<>();
     public String comment;
 
     public static class Category {
@@ -18,11 +19,7 @@ public class Book {
     }
 
     public static class Keyword {
-        public int id;
-        public String literal;
-
-        public String toString() {
-            return literal;
-        }
+        public int BookId;
+        public String keyword;
     }
 }
