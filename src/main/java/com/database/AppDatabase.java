@@ -1,6 +1,8 @@
 package com.database;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppDatabase {
     private static final String DB_NAME = "LMS";
@@ -36,11 +38,43 @@ public class AppDatabase {
         }
     }
 
-    public PreparedStatement getPreparedStatement(String sql, Object... params) throws SQLException {
+    public Executable getExecutable(final String sql) {
+        try {
+            return new Executable(getPreparedStatement(sql));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private PreparedStatement getPreparedStatement(final String sql, Object... params) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
             preparedStatement.setObject(i + 1, params[i]);
         }
         return  preparedStatement;
+    }
+
+    public static class Executable {
+        private PreparedStatement preparedStatement = null;
+
+        private Executable(PreparedStatement preparedStatement) {
+            this.preparedStatement = preparedStatement;
+        }
+
+        public Executable setParams(Object... params) throws SQLException {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatement.setObject(i + 1, params[i]);
+            }
+            return this;
+        }
+
+        public ResultSet query() throws SQLException {
+            return preparedStatement.executeQuery();
+        }
+
+        public int update() throws SQLException {
+            return preparedStatement.executeUpdate();
+        }
     }
 }

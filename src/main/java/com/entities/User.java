@@ -1,19 +1,64 @@
 package com.entities;
 
-public class User {
-    int id;
-    Type type = Type.READER;
-    Gender gender =  Gender.OTHER;
-    int bookAmount = 0;
-    int loanPeriod = 30;
-    String comment;
+import com.database.AppDatabase;
 
+import java.sql.ResultSet;
+
+public class User {
+    public int id;
+    public String name;
+    public String pass;
+    public Type type = Type.READER;
+    public Gender gender =  Gender.OTHER;
+    public int bookAmount = 0;
+    public int loanPeriod = 30;
+    public String comment;
 
     public enum Type {
-        READER,ADMIN,ROOT
+        READER(0),
+        ADMIN(1),
+        ROOT(2);
+
+        private final int value;
+
+        Type(int value) {
+            this.value = value;
+        }
+
+        public static Type fromInt(int value) {
+            return values()[value];
+        }
+
+        public int getInt() {
+            return value;
+        }
+
+        public String toString() {
+            return Integer.toString(value);
+        }
     }
 
     public enum Gender {
-        MALE,FEMALE,OTHER
+        MALE(0),
+        FEMALE(1),
+        OTHER(2);
+
+        private final int value;
+
+        private  Gender(int value) {
+            this.value = value;
+        }
+
+        public static Gender fromInt(int value) {
+            return Gender.values()[value];
+        }
+
+        public int getInt() {
+            return value;
+        }
+
+        public String toString() {
+            return Integer.toString(value);
+        }
     }
 }

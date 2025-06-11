@@ -6,7 +6,7 @@ import java.util.Set;
 public class Book {
     public int id;
     public int category;
-    public Set<String> keywords = new HashSet<>();
+    public Set<Integer> keywords = new HashSet<>();
     public String comment;
 
     public static class Category {
