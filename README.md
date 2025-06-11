@@ -36,6 +36,7 @@
 ### Action
 | Key     | Type         | Details                               |
 |:--------|:-------------|:--------------------------------------|
+| actType | int          | NOT NULL                              |
 | userId  | int          | FOREIGN KEY REFERENCES (User)         |
 | bookId  | int          | FOREIGN KEY REFERENCES (BookCategory) |
 | actDate | Date         | NOT NULL                              |
