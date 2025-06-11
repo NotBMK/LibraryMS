@@ -1,9 +1,5 @@
 package com.entities;
 
-import com.database.AppDatabase;
-
-import java.sql.ResultSet;
-
 public class User {
     public int id;
     public String name;
@@ -45,7 +41,7 @@ public class User {
 
         private final int value;
 
-        private  Gender(int value) {
+        Gender(int value) {
             this.value = value;
         }
 

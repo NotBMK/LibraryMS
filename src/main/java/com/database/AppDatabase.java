@@ -1,8 +1,6 @@
 package com.database;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AppDatabase {
     private static final String DB_NAME = "LMS";
@@ -56,7 +54,7 @@ public class AppDatabase {
     }
 
     public static class Executable {
-        private PreparedStatement preparedStatement = null;
+        private PreparedStatement preparedStatement;
 
         private Executable(PreparedStatement preparedStatement) {
             this.preparedStatement = preparedStatement;
