@@ -12,8 +12,10 @@ public class User {
 
     public enum Type {
         READER(0),
-        ADMIN(1),
-        ROOT(2);
+        S_READER(1),
+        ADMIN(2),
+        ROOT(3);
+        // TODO
 
         private final int value;
 
