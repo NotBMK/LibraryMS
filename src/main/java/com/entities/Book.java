@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Book {
+    public static final int GOOD = -1;
+    public static final int BROKEN = -2;
+    public static final int LOST = -3;
+
     public int id;
     public int category;
+    public int flag = GOOD;
     public Set<Integer> keywords = new HashSet<>();
     public String comment;
 

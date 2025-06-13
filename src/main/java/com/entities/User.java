@@ -1,7 +1,5 @@
 package com.entities;
 
-import sun.text.resources.cldr.ext.FormatData_ii;
-
 public class User {
     public int id;
     public String name;

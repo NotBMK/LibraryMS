@@ -39,7 +39,7 @@
 |:-------|:-----|:---------------------------------|
 | bookId | int  | FOREIGN KEY REFERENCES (Book)    |
 | keyId  | int  | FOREIGN KEY REFERENCES (Keyword) |
-### book_cant_be_used_now
+### BookNA
 | Key         | Type | Details |
 |:------------|:-----|:--------|
 | userId      | int  |         |
