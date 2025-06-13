@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS User(
     comment varchar(256)
 );
 
-CREATE TABLE IF NOT EXISTS BookCategroy(
+CREATE TABLE IF NOT EXISTS BookCategory(
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name varchar(64) NOT NULL
 );
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Book(
     categoryId int NOT NULL,
     flag int DEFAULT -1,
     comment varchar(256),
-    FOREIGN KEY (categoryId) REFERENCES BookCategroy(id) ON UPDATE CASCADE
+    FOREIGN KEY (categoryId) REFERENCES BookCategory(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS BookKeyword(

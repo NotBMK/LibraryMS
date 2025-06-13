@@ -3,14 +3,14 @@ package com.database;
 import java.sql.*;
 
 public class AppDatabase {
-    private static final String DB_NAME = "LMS";
+    private static final String DB_NAME = "dbProj";
     private static final String DB_CHARSET = "UTF-8";
     private static final String DB_TIMEZONE = "UTC";
     private static final String DB_URL = String.format("jdbc:mysql://localhost:3306/%s?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=%s&serverTimezone=%s",
             DB_NAME, DB_CHARSET, DB_TIMEZONE);
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "mysql2w0t0f5";
+    private static final String PASSWORD = "123456";
 
     private static volatile  AppDatabase instance = null;
 
