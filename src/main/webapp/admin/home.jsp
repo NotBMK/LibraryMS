@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>图书管理信息系统 - 用户中心</title>
+    <title>图书管理信息系统 - 管理员中心</title>
     <style>
         body {
             background-color: #E3E3E3;
@@ -201,8 +201,8 @@
                 <%= session.getAttribute("username").toString().substring(0, 1) %>
             </div>
             <div class="user-menu">
-                <a href="userInfo.jsp">个人信息</a>
-                <a href="changePassword.jsp">修改密码</a>
+                <a href="adminInfo.jsp">个人信息</a>
+                <a href="adminPassword.jsp">修改密码</a>
                 <a href="<%= request.getContextPath() %>/logout">退出登录</a>
             </div>
         </div>
@@ -211,36 +211,36 @@
     <div class="function-grid">
         <div class="function-card">
             <div class="function-icon">📚</div>
-            <div class="function-title">图书借阅</div>
-            <div class="function-desc">浏览和借阅图书馆中的可用书籍</div>
-            <a href="borrowBook.jsp" class="function-btn">开始借阅</a>
+            <div class="function-title">图书管理</div>
+            <div class="function-desc">处理图书有关情况</div>
+            <a href="manageBook.jsp" class="function-btn">点击管理</a>
         </div>
 
         <div class="function-card">
-            <div class="function-icon">📦</div>
-            <div class="function-title">图书归还</div>
-            <div class="function-desc">归还已借阅的图书并查看借阅记录</div>
-            <a href="returnBook.jsp" class="function-btn">归还图书</a>
+            <div class="function-icon">👥</div>
+            <div class="function-title">用户管理</div>
+            <div class="function-desc">查看用户情况</div>
+            <a href="manageUser.jsp" class="function-btn">点击管理</a>
         </div>
 
         <div class="function-card">
-            <div class="function-icon">🔍</div>
-            <div class="function-title">图书查找</div>
-            <div class="function-desc">搜索图书馆中的所有书籍</div>
-            <a href="searchBook.jsp" class="function-btn">查找图书</a>
+            <div class="function-icon">💼</div>
+            <div class="function-title">用户业务</div>
+            <div class="function-desc">处理用户业务</div>
+            <a href="userService.jsp" class="function-btn">查找图书</a>
         </div>
 
         <div class="function-card">
             <div class="function-icon">⚠️</div>
-            <div class="function-title">意外申报</div>
-            <div class="function-desc">报告图书丢失、损坏等意外情况</div>
-            <a href="reportProblem.jsp" class="function-btn">申报意外</a>
+            <div class="function-title">历史记录</div>
+            <div class="function-desc">查看图书馆内所有历史操作</div>
+            <a href="reportProblem.jsp" class="function-btn">点击查看</a>
         </div>
     </div>
 
-<%--    <div class="logout">--%>
-<%--        <a href="logoutServlet.jsp">退出系统</a>--%>
-<%--    </div>--%>
+    <%--    <div class="logout">--%>
+    <%--        <a href="logoutServlet.jsp">退出系统</a>--%>
+    <%--    </div>--%>
 </div>
 </body>
 </html>

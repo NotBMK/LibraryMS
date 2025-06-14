@@ -9,6 +9,7 @@ public class Book {
     public static final int LOST = -3;
 
     public int id;
+    public String name;
     public int category;
     public int flag = GOOD;
     public Set<Integer> keywords = new HashSet<>();
