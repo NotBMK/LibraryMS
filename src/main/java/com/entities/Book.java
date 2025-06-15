@@ -12,6 +12,7 @@ public class Book {
     public String name;
     public int category;
     public int flag = GOOD;
+    public double price;
     public Set<Integer> keywords = new HashSet<>();
     public String comment;
 
@@ -27,5 +28,9 @@ public class Book {
     public static class Keyword {
         public int BookId;
         public String keyword;
+
+        public String toString() {
+            return keyword;
+        };
     }
 }
