@@ -89,6 +89,33 @@ public class UserDao {
         return false;
     }
 
+    public static boolean checkPassword(User user, String pass) {
+        try {
+            synchronized (Dao.login) {
+                ResultSet resultSet = Dao.login.setParams(user.name).query();
+                String true_password = "";
+                if (resultSet.next()) {
+                    true_password = resultSet.getString("pass");
+                }
+                return pass.equals(true_password);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean updatePassword(User user, String new_password) {
+        try {
+            synchronized (Dao.updatePassword) {
+                return Dao.updatePassword.setParams(new_password, user.id).update() == 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 
     private interface Dao {
@@ -97,5 +124,6 @@ public class UserDao {
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");
         AppDatabase.Executable getUserById = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE id=?");
         AppDatabase.Executable updateUserInfo = AppDatabase.getInstance().getExecutable("UPDATE User SET name=?, gender=?, comment=? WHERE id=?");
+        AppDatabase.Executable updatePassword = AppDatabase.getInstance().getExecutable("UPDATE User SET pass=? WHERE id=?");
     }
 }
