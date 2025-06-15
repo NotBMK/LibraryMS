@@ -56,9 +56,46 @@ public class UserDao {
         return false;
     }
 
+    public static boolean getUserInfoById(User user, int userId) {
+        try {
+            synchronized (Dao.getUserById) {
+                ResultSet resultSet = Dao.getUserById.setParams(userId).query();
+                if (resultSet.next()) {
+                    user.id = resultSet.getInt("id");
+                    user.name = resultSet.getString("name");
+                    //System.out.println("666"+user.name);
+                    user.type = User.Type.fromInt(resultSet.getInt("type"));
+                    user.gender = User.Gender.fromInt(resultSet.getInt("gender"));
+                    user.bookAmount = resultSet.getInt("borrowCount");
+                    user.loanPeriod = resultSet.getInt("loanPeriod");
+                    user.comment = resultSet.getString("comment");
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean updateUserInfo(User user) {
+        try {
+            synchronized (Dao.updateUserInfo) {
+                return Dao.updateUserInfo.setParams( user.name,  user.gender.getInt(), user.comment, user.id).update() == 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
     private interface Dao {
         AppDatabase.Executable getName = AppDatabase.getInstance().getExecutable("SELECT name FROM User WHERE name=?");
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");
+        AppDatabase.Executable getUserById = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE id=?");
+        AppDatabase.Executable updateUserInfo = AppDatabase.getInstance().getExecutable("UPDATE User SET name=?, gender=?, comment=? WHERE id=?");
     }
 }

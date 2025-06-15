@@ -343,7 +343,7 @@
                 <%= session.getAttribute("username").toString().substring(0, 1) %>
             </div>
             <div class="user-menu">
-                <a href="userInfo.jsp">个人信息</a>
+                <a href="<%= request.getContextPath() %>/user/userInfo">个人信息</a>
                 <a href="changePassword.jsp">修改密码</a>
                 <a href="<%= request.getContextPath() %>/logout">退出登录</a>
             </div>

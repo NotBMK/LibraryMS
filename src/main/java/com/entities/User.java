@@ -45,4 +45,77 @@ public class User {
             return Integer.toString(ordinal());
         }
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public int getBookAmount() {
+        return bookAmount;
+    }
+
+    public void setBookAmount(int bookAmount) {
+        this.bookAmount = bookAmount;
+    }
+
+    public int getLoanPeriod() {
+        return loanPeriod;
+    }
+
+    public void setLoanPeriod(int loanPeriod) {
+        this.loanPeriod = loanPeriod;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getGenderDisplay() {
+        switch(this.gender) {
+            case MALE: return "男";
+            case FEMALE: return "女";
+            default: return "其他";
+        }
+    }
+
+    public String getTypeDisplay() {
+        switch(this.type) {
+            case ADMIN: return "管理员";
+            case ROOT: return "超级管理员";
+            default: return "普通用户";
+        }
+    }
+
 }
