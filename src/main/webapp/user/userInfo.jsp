@@ -1,7 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+
 <html>
 <head>
-    <title>图书管理信息系统 - 用户中心</title>
+    <title>图书管理信息系统 - 用户信息</title>
     <style>
         body {
             background-color: #E3E3E3;
@@ -11,9 +13,12 @@
         }
 
         .container {
-            max-width: 800px;
-            margin: 30px auto;
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .header {
@@ -65,68 +70,56 @@
             background-color: #f0f0f0;
         }
 
-        .function-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .function-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .function-card:hover {
-            transform: scale(1.03);
-        }
-
-        .function-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            color: #2196F3;
-        }
-
-        .function-title {
-            font-size: 1.2em;
+        .info-label {
             font-weight: bold;
-            margin-bottom: 10px;
+            color: #555;
+            width: 120px;
         }
 
-        .function-desc {
-            color: #666;
-            margin-bottom: 15px;
+        .info-value {
+            flex-grow: 1;
+            color: #333;
         }
 
-        .function-btn {
-            display: inline-block;
-            background-color: #2196F3;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        .function-btn:hover {
-            background-color: #0b7dda;
-        }
-
-        .logout {
-            text-align: center;
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
             margin-top: 30px;
         }
 
-        .logout a {
-            color: #f44336;
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
 
-        .logout a:hover {
-            text-decoration: underline;
+        .back-btn {
+            background-color: #f44336;
+        }
+
+        .back-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .edit-btn {
+            background-color: #2196F3;
+        }
+
+        .edit-btn:hover {
+            background-color: #0b7dda;
         }
     </style>
     <script>
@@ -134,35 +127,30 @@
             const userArea = document.querySelector('.user-area');
             const userCircle = document.querySelector('.user-circle');
             const userMenu = document.querySelector('.user-menu');
-
             let menuTimeout;
 
-            // 鼠标进入用户区域显示菜单
+            // 用户菜单交互
             userArea.addEventListener('mouseenter', function() {
                 clearTimeout(menuTimeout);
                 userMenu.style.display = 'block';
             });
 
-            // 鼠标离开用户区域隐藏菜单
             userArea.addEventListener('mouseleave', function() {
                 menuTimeout = setTimeout(() => {
                     userMenu.style.display = 'none';
-                }, 300); // 添加一点延迟防止鼠标短暂离开时菜单消失
+                }, 300);
             });
 
-            // 鼠标进入菜单时取消隐藏
             userMenu.addEventListener('mouseenter', function() {
                 clearTimeout(menuTimeout);
             });
 
-            // 鼠标离开菜单时隐藏
             userMenu.addEventListener('mouseleave', function() {
                 menuTimeout = setTimeout(() => {
                     userMenu.style.display = 'none';
                 }, 100);
             });
 
-            // 点击头像切换菜单显示状态
             userCircle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (userMenu.style.display === 'block') {
@@ -172,12 +160,10 @@
                 }
             });
 
-            // 点击页面其他地方隐藏菜单
             document.addEventListener('click', function() {
                 userMenu.style.display = 'none';
             });
 
-            // 防止菜单内部点击传播到document
             userMenu.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
@@ -185,7 +171,6 @@
     </script>
 </head>
 <body>
-
 <% if (session.getAttribute("username") == null) { %>
 <script>
     alert('您尚未登录，请先登录！');
@@ -193,9 +178,24 @@
 </script>
 <% return; } %>
 
+<%-- 添加 alert 消息提示 --%>
+<% if (request.getSession().getAttribute("successMsg") != null) { %>
+<script>
+    alert('<%= request.getSession().getAttribute("successMsg") %>');
+    <% request.getSession().removeAttribute("successMsg"); %>
+</script>
+<% } %>
+
+<% if (request.getSession().getAttribute("errorMsg") != null) { %>
+<script>
+    alert('<%= request.getSession().getAttribute("errorMsg") %>');
+    <% request.getSession().removeAttribute("errorMsg"); %>
+</script>
+<% } %>
+
 <div class="container">
     <div class="header">
-        <h2>欢迎使用图书管理系统</h2>
+        <h2>用户信息</h2>
         <div class="user-area">
             <div class="user-circle">
                 <%= session.getAttribute("username").toString().substring(0, 1) %>
@@ -208,39 +208,45 @@
         </div>
     </div>
 
-    <div class="function-grid">
-        <div class="function-card">
-            <div class="function-icon">📚</div>
-            <div class="function-title">图书借阅</div>
-            <div class="function-desc">浏览和借阅图书馆中的可用书籍</div>
-            <a href="borrowBook.jsp" class="function-btn">开始借阅</a>
-        </div>
-
-        <div class="function-card">
-            <div class="function-icon">📦</div>
-            <div class="function-title">图书归还</div>
-            <div class="function-desc">归还已借阅的图书并查看借阅记录</div>
-            <a href="returnBook.jsp" class="function-btn">归还图书</a>
-        </div>
-
-        <div class="function-card">
-            <div class="function-icon">🔍</div>
-            <div class="function-title">图书查找</div>
-            <div class="function-desc">搜索图书馆中的所有书籍</div>
-            <a href="searchBook.jsp" class="function-btn">查找图书</a>
-        </div>
-
-        <div class="function-card">
-            <div class="function-icon">⚠️</div>
-            <div class="function-title">意外申报</div>
-            <div class="function-desc">报告图书丢失、损坏等意外情况</div>
-            <a href="reportProblem.jsp" class="function-btn">申报意外</a>
-        </div>
+    <div class="info-row">
+        <div class="info-label">用户名：</div>
+        <div class="info-value">${user.name}</div>
     </div>
 
-<%--    <div class="logout">--%>
-<%--        <a href="logoutServlet.jsp">退出系统</a>--%>
-<%--    </div>--%>
+    <div class="info-row">
+        <div class="info-label">用户ID：</div>
+        <div class="info-value">${user.id}</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">性别：</div>
+        <div class="info-value">${user.genderDisplay}</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">用户类型：</div>
+        <div class="info-value">${user.typeDisplay}</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">借阅数量：</div>
+        <div class="info-value">${user.bookAmount}</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">借阅期限：</div>
+        <div class="info-value">${user.loanPeriod} 天</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">备注信息：</div>
+        <div class="info-value">${user.comment}</div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn back-btn" onclick="window.location.href='home.jsp'">返回主页</button>
+        <button class="btn edit-btn" onclick="window.location.href='editUserInfo.jsp'">编辑信息</button>
+    </div>
 </div>
 </body>
 </html>

@@ -60,6 +60,10 @@ public class loginServlet extends HttpServlet {
             session.setAttribute("role", user.type == User.Type.ADMIN ? ROLE_ADMIN : ROLE_USER);
             session.setAttribute("userId", user.id);
             session.setAttribute("userType", user.type.getInt());
+            session.setAttribute("userGender", user.gender.getInt());
+            session.setAttribute("userBookAmount", user.bookAmount);
+            session.setAttribute("userLoanPeriod", user.loanPeriod);
+            session.setAttribute("userComment", user.comment);
 
             // 根据角色重定向到不同页面
             if (user.type == User.Type.ADMIN) {
