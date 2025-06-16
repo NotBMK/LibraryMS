@@ -1,5 +1,7 @@
 use dbProj;
 
+drop table User,BookCategory,BookKeyword,Book,BookNA,Action;
+
 CREATE TABLE IF NOT EXISTS User(
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name varchar(64) NOT NULL,
@@ -18,12 +20,13 @@ CREATE TABLE IF NOT EXISTS BookCategory(
 
 CREATE TABLE IF NOT EXISTS Keyword(
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    literal varchar(32) NOT NULL
+    keyword varchar(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Book(
     id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name varchar(64) NOT NULL,
+    price double NOT NULL DEFAULT 0,
     categoryId int NOT NULL,
     flag int DEFAULT -1,
     comment varchar(256),
