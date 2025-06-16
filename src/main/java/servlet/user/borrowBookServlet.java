@@ -26,11 +26,9 @@ public class borrowBookServlet extends HttpServlet {
         // 获取表单数据
         String name = request.getParameter("bookName");
         String id = request.getParameter("bookId");
-        List<Integer> kws = (List<Integer>) request.getSession().getAttribute("skws");
+        String kws = request.getParameter("bookKeyword");
 
-        System.out.println("Received - bookId: " + (id == null || id.isEmpty() ? "null" : id) + ", bookName: " + name + "kws: " + kws);
-
-        List<Book> books = BookDao.search(id, name, kws);
+        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
         System.out.println("Found " + books.size() + " books.");
 
         if (books.isEmpty()) {

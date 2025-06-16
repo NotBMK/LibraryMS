@@ -6,7 +6,8 @@
 <html>
 <head>
     <title>图书管理信息系统 - 图书借阅</title>
-    <link rel="stylesheet" href="../style/option_button.css">
+    <link rel="stylesheet" href="../style/custom_checkbox.css">
+    <link rel="stylesheet" href="../style/search_bar.css">
     <style>
         body {
             background-color: #E3E3E3;
@@ -293,43 +294,6 @@
                 //e.preventDefault();
                 document.getElementById('initMessage').style.display = 'none';
             });
-
-            // 模拟搜索结果
-            <%--function simulateSearch() {--%>
-            <%--    // 隐藏空消息，显示图书列表--%>
-            <%--    emptyMessage.style.display = 'none';--%>
-            <%--    bookList.style.display = 'block';--%>
-
-            <%--    // 获取搜索输入--%>
-            <%--    const idInput = document.getElementById('bookId').value;--%>
-            <%--    const nameInput = document.getElementById('bookName').value;--%>
-
-            <%--    // 这里模拟根据搜索条件返回的图书数据--%>
-            <%--    // 实际应用中应该从后端获取数据--%>
-            <%--    const mockBooks = [--%>
-            <%--        { id: '1001', name: 'Java编程思想', author: 'Bruce Eckel', publisher: '机械工业出版社', status: '可借阅' },--%>
-            <%--        { id: '1002', name: 'Python数据分析', author: 'Wes McKinney', publisher: '机械工业出版社', status: '可借阅' },--%>
-            <%--        { id: '1003', name: 'JavaScript高级程序设计', author: 'Matt Frisbie', publisher: '人民邮电出版社', status: '可借阅' }--%>
-            <%--    ];--%>
-
-            <%--    // 清空现有表格内容--%>
-            <%--    const tableBody = document.querySelector('#bookTable tbody');--%>
-            <%--    tableBody.innerHTML = '';--%>
-
-            <%--    // 添加模拟数据到表格--%>
-            <%--    mockBooks.forEach(book => {--%>
-            <%--        const row = document.createElement('tr');--%>
-            <%--        row.innerHTML = `--%>
-            <%--            <td><input type="checkbox" name="book" value="${book.id}"></td>--%>
-            <%--            <td>${book.id}</td>--%>
-            <%--            <td>${book.name}</td>--%>
-            <%--            <td>${book.author}</td>--%>
-            <%--            <td>${book.publisher}</td>--%>
-            <%--            <td>${book.status}</td>--%>
-            <%--        `;--%>
-            <%--        tableBody.appendChild(row);--%>
-            <%--    });--%>
-            <%--}--%>
         });
     </script>
 </head>
@@ -359,61 +323,13 @@
         </div>
     </div>
 
-    <div class="search-area">
-        <form id="searchForm" class="search-form" action="<%= request.getContextPath() %>/user/borrowBook" method="get">
-            <input type="text" name="bookId" id="bookId" placeholder="请输入图书ID">
-            <input type="text" name="bookName" id="bookName" placeholder="请输入图书名称">
-            <button name="submitButton" type="submit">搜索</button>
+    <div class="search-container">
+        <form id="searchForm" class="search-form" action="<%= request.getContextPath() %>/user/borrowBook" method="GET" accept-charset="UTF-8">
+                <input type="text" name="bookId" id="bookId" placeholder="图书ID">
+                <input type="text" name="bookName" id="bookName" placeholder="图书名称">
+                <input type="text" name="bookKeyword" id="bookKeyword" placeholder="图书关键字（用空格分开）">
+                <button class="search-button" name="submitButton" type="submit">搜索</button>
         </form>
-        <%
-            List<Integer> skws = (List<Integer>) session.getAttribute("skws");
-            if (skws == null) {
-                skws = new ArrayList<>();
-                session.setAttribute("skws", skws);
-            }
-            List<Book.Keyword> kws = BookDao.getAllKeywords();
-        %>
-        <div class="button-container">
-            <%
-                for (Book.Keyword kw : kws) {
-                    boolean isSelected = skws.contains(kw.id);
-            %>
-            <div role="button" class="option-btn <%= isSelected ? "selected" : "" %>"
-                    data-kw-id="<%=kw.id %>">
-                <%= kw.keyword %>
-            </div>
-            <%
-                }
-            %>
-        </div>
-        <script>
-            function sendToJSP(kwId, action) {
-                const data = {
-                    kwId: kwId,
-                    action: action
-                }
-                fetch('updateKeywordSelected.jsp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then(response => response.text())
-                    .then(data => {
-                       console.log(data)
-                    });
-            }
-
-            document.querySelectorAll(".option-btn").forEach(button => {
-                button.addEventListener('click', function () {
-                    /** @type {boolean} */
-                    const isSelected = this.classList.toggle('selected');
-                    const kwId = this.getAttribute('data-kw-id');
-                    sendToJSP(kwId, isSelected);
-                })
-            });
-        </script>
     </div>
 
     <div id="initMessage" class="empty-message">

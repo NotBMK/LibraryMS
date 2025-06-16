@@ -68,6 +68,7 @@ public class AppDatabase {
         }
 
         public ResultSet query() throws SQLException {
+            System.out.println("query with" + preparedStatement.toString());
             return preparedStatement.executeQuery();
         }
 

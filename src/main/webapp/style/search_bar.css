@@ -1,0 +1,44 @@
+/* SearchBar 样式 */
+
+.search-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.search-form input[type="text"] {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #DDD;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.search-form input[type="text"]:focus {
+    border-color: #2196F3;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+    outline: none;
+}
+
+.search-form button[type="submit"] {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.search-form button[type="submit"]:hover {
+    background-color: #0b7dda;
+}
