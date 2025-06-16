@@ -2,7 +2,7 @@
 <%@ page isELIgnored="false" %>
 <html>
 <head>
-  <title>图书管理信息系统 - 更新密码</title>
+  <title>图书管理信息系统 - 修改密码</title>
   <style>
     body {
       background-color: #E3E3E3;
@@ -104,19 +104,13 @@
       background-color: #d32f2f;
     }
 
-    .save-btn {
-      background-color: #4CAF50;
+    .verify-btn {
+      background-color: #2196F3;
       color: white;
     }
 
-    .save-btn:hover {
-      background-color: #388E3C;
-    }
-
-    .error-message {
-      color: red;
-      text-align: center;
-      margin-bottom: 10px;
+    .verify-btn:hover {
+      background-color: #0b7dda;
     }
   </style>
   <script>
@@ -175,47 +169,37 @@
 </script>
 <% return; } %>
 
-<% if (request.getSession().getAttribute("successMsg") != null) { %>
-<div class="error-message">
-  <%= request.getSession().getAttribute("successMsg") %>
-</div>
-<% request.getSession().removeAttribute("errorMsg"); } %>
-
 <% if (request.getSession().getAttribute("errorMsg") != null) { %>
-<div class="error-message">
-  <%= request.getSession().getAttribute("errorMsg") %>
-</div>
-<% request.getSession().removeAttribute("errorMsg"); } %>
+<script>
+  alert('<%= request.getSession().getAttribute("errorMsg") %>');
+  <% request.getSession().removeAttribute("errorMsg"); %>
+</script>
+<% } %>
 
 <div class="container">
   <div class="header">
-    <h2>更新密码（更新后需重新登录）</h2>
+    <h2>修改密码</h2>
     <div class="user-area">
       <div class="user-circle">
         <%= session.getAttribute("username").toString().substring(0, 1) %>
       </div>
       <div class="user-menu">
-        <a href="<%= request.getContextPath() %>/user/userInfo">个人信息</a>
+        <a href="<%= request.getContextPath() %>/admin/adminInfo">个人信息</a>
         <a href="changePassword.jsp">修改密码</a>
         <a href="<%= request.getContextPath() %>/logout">退出登录</a>
       </div>
     </div>
   </div>
 
-  <form action="${pageContext.request.contextPath}/user/updatePassword" method="post">
+  <form action="${pageContext.request.contextPath}/admin/verifyPassword" method="post">
     <div class="form-group">
-      <label for="newPassword">新密码</label>
-      <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-    </div>
-
-    <div class="form-group">
-      <label for="confirmPassword">确认新密码</label>
-      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+      <label for="currentPassword">当前密码</label>
+      <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
     </div>
 
     <div class="form-actions" style="margin-top: 30px;">
       <button type="button" class="btn back-btn" onclick="window.history.back()">返回</button>
-      <button type="submit" class="btn save-btn">确认修改</button>
+      <button type="submit" class="btn verify-btn">验证身份</button>
     </div>
   </form>
 </div>
