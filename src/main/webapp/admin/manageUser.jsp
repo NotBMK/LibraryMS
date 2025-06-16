@@ -159,7 +159,7 @@
         </div>
     </div>
 
-    <form action="${pageContext.request.contextPath}/admin/searchUsers" method="post" class="search-form">
+    <form action="<%= request.getContextPath() %>/admin/searchUsers" method="post" class="search-form">
         <input type="text" name="userId" placeholder="用户ID">
         <input type="text" name="username" placeholder="用户名">
         <select name="gender">
@@ -171,9 +171,18 @@
         <input type="text" name="comment" placeholder="备注信息">
 
         <button type="submit">搜索</button>
+
+
     </form>
 
-    <%-- 查询结果展示 --%>
+    <div style="margin-bottom: 20px; text-align: left;">
+        <button type="button" onclick="window.location.href='registerUser.jsp'" style="padding: 8px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            新增用户
+        </button>
+    </div>
+
+
+<%-- 查询结果展示 --%>
     <table class="user-table">
         <thead>
         <tr>
