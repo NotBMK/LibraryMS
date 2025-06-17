@@ -4,6 +4,7 @@ import com.entities.User;
 
 import java.sql.ResultSet;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,11 +193,21 @@ public class UserDao {
         return userList;
     }
 
-
+    public static boolean updateUserBorrowCount (int userId) {
+        synchronized (Dao.increaseUserBorrowCount) {
+            try {
+                return Dao.increaseUserBorrowCount.setParams(userId).update() == 1;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
 
 
     private interface Dao {
+        AppDatabase.Executable increaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount+1 WHERE id=?");
         AppDatabase.Executable getName = AppDatabase.getInstance().getExecutable("SELECT name FROM User WHERE name=?");
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");

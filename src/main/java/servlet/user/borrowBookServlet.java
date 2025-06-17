@@ -23,9 +23,12 @@ public class borrowBookServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         // 获取表单数据
-        String id = request.getParameter("borrowBookId");
-        System.out.println(id);
+        int borrowBookId = Integer.parseInt(request.getParameter("borrowBookId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int userLoadPeriod = Integer.parseInt(request.getParameter("userLoanPeriod"));
 
-
+        if (BookDao.borrowBook(userId, borrowBookId, userLoadPeriod)) {
+            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+        }
     }
 }

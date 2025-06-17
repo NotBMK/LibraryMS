@@ -165,8 +165,6 @@
             const searchForm = document.getElementById('searchForm');
             const bookList = document.getElementById('bookList');
             const emptyMessage = document.getElementById('emptyMessage');
-            const borrowBtn = document.getElementById('borrowBtn');
-            const deleteBtn = document.getElementById('deleteBtn');
 
             let menuTimeout;
 
@@ -226,23 +224,25 @@
                 document.getElementById('initMessage').style.display = 'none';
             });
 
-            // 借书窗口设置
-            const popup = document.getElementById("popup");
-            const popupOverlay = document.getElementById("popup-overlay");
-            const interestingBookId = document.getElementById("interestingBookId");
-            const interestingBookName = document.getElementById("interestingBookName");
-            const interestingBookCategory = document.getElementById("interestingBookCategory");
-            const interestingBookFlag = document.getElementById("interestingBookFlag");
-            const interestingBookPrice = document.getElementById("interestingBookPrice");
-            const interestingBookComment = document.getElementById("interestingBookComment");
-
-            const popupCloseBtn = document.querySelector(".popup-close-button");
-            popupCloseBtn.addEventListener('click', function () {
-                popup.style.display = "none";
-                popupOverlay.style.display = "none";
-            });
-
             document.querySelectorAll('.popup-link').forEach(link => {
+                // 借书窗口设置
+                const popup = document.getElementById("popup");
+                const popupOverlay = document.getElementById("popup-overlay");
+                const interestingBookId = document.getElementById("interestingBookId");
+                const interestingBookName = document.getElementById("interestingBookName");
+                const interestingBookCategory = document.getElementById("interestingBookCategory");
+                const interestingBookFlag = document.getElementById("interestingBookFlag");
+                const interestingBookPrice = document.getElementById("interestingBookPrice");
+                const interestingBookComment = document.getElementById("interestingBookComment");
+                const borrowBtn = document.getElementById("borrowBtn");
+                const borrowForm = document.getElementById("borrowForm");
+
+                const popupCloseBtn = document.querySelector(".popup-close-button");
+                popupCloseBtn.addEventListener('click', function () {
+                    popup.style.display = "none";
+                    popupOverlay.style.display = "none";
+                });
+
                 link.addEventListener('click', function() {
                     popup.style.display = "block";
                     popupOverlay.style.display = "block";
@@ -261,10 +261,10 @@
                     }
                     interestingBookPrice.innerHTML = bookInfo[4];
                     interestingBookComment.innerHTML = bookInfo[5];
-                    sessionStorage.setItem()
+                    document.getElementById("borrowBookId").value = bookInfo[0];
                 });
-            })
-        });
+            });
+        })
     </script>
 </head>
 <body>
@@ -307,6 +307,7 @@
     </div>
 
     <%
+        request.setAttribute("borrowBookId",-1);
         List<Book> books = (List<Book>) request.getAttribute("books");
         if (books != null && !books.isEmpty()) {
     %>
@@ -382,10 +383,12 @@
                 <td id="interestingBookComment"></td>
             </tr>
         </table>
-        <form action="<%=request.getContextPath()%>/user/borrowBook" method="get">
+        <form id="borrowForm" action="<%=request.getContextPath()%>/user/borrowBook" method="get">
             <div class="action-buttons" style="justify-content: space-between">
-                <button id="deleteBtn" class="delete-btn">删除记录</button>
-                <button id="borrowBtn" class="borrow-btn">确认借阅</button>
+                <input type="hidden" name="borrowBookId" id="borrowBookId">
+                <input type="hidden" name="userId" id="userId" value="<%=session.getAttribute("userId")%>">
+                <input type="hidden" name="userLoanPeriod" id="userLoanPeriod" value="<%=session.getAttribute("userLoanPeriod")%>">
+                <button type="submit" style="width: 100%;" id="borrowBtn" class="borrow-btn">确认借阅</button>
             </div>
         </form>
 
