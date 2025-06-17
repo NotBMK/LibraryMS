@@ -84,7 +84,7 @@ public class BookDao {
     public static List<Book> getBorrowedBooksByUserId(int userId) {
         List<Book> books = new ArrayList<>();
         // SQL 查询获取用户借阅的书籍（未归还）
-        String sql = "SELECT b.* FROM Book b JOIN BookNa bn ON bn.bookId = b.id WHERE bn.userId = ?" ;
+        String sql = "SELECT b.* FROM Book b JOIN BookNa bn ON bn.bookId = b.id WHERE b.flag = ?" ;
 
         try {
             // 使用 AppDatabase 执行查询
