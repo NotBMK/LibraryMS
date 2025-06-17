@@ -3,7 +3,9 @@ package com.database;
 import com.entities.Book;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookDao {
 
@@ -27,7 +29,7 @@ public class BookDao {
         return keywords;
     }
 
-    public static List<Book> search(String id, String name, List<Integer> keywords) {
+    public static List<Book> search(String id, String name, List<String> keywords) {
         List<Book> books = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
@@ -40,20 +42,21 @@ public class BookDao {
                 sql.append(" and ");
             }
             params.add(name);
-            sql.append("name like %?%");
+            sql.append("name like CONCAT('%',?,'%')");
         }
         if (keywords != null && !keywords.isEmpty()) {
-            if (!sql.isEmpty()) {
-                sql.append(" and ");
+            List<Integer> kwIds = getKeywordsId(keywords);
+            if (!kwIds.isEmpty()) {
+                if (!sql.isEmpty()) {
+                    sql.append(" and ");
+                }
+                String kwSet = kwIds.stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+                sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
+                sql.append( kwSet);
+                sql.append("))");
             }
-            params.addAll(Arrays.asList(keywords));
-            String[] kws = new String[keywords.size()];
-            for (int i = 0; i < kws.length; i++) {
-                kws[i] = keywords.get(i).toString();
-            }
-            sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
-            sql.append(String.join(",", kws));
-            sql.append("))");
         }
         String exe_sql = "SELECT * FROM Book";
         if (!sql.isEmpty()) {
@@ -61,20 +64,12 @@ public class BookDao {
         }
 
         try {
-            System.out.println(exe_sql);
             AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(exe_sql);
             if (!params.isEmpty())
-                executable.setParams(Arrays.asList(params.toArray()));
+                executable.setParams(params.toArray());
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,14 +88,7 @@ public class BookDao {
 
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,9 +96,20 @@ public class BookDao {
         return books;
     }
 
-    private static List<Integer> getKeywordsId(String... keywords) {
+    public static Book fromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.id = resultSet.getInt("id");
+        book.name = resultSet.getString("name");
+        book.category = Book.Category.getCategory(resultSet.getInt("categoryId"));
+        book.flag = resultSet.getInt("flag");
+        book.price = resultSet.getDouble("price");
+        book.comment = resultSet.getString("comment");
+        return book;
+    }
+
+    private static List<Integer> getKeywordsId(List<String> keywords) {
         List<Integer> ids = new ArrayList<>();
-        String cond = String.join(",", Collections.nCopies(keywords.length, "?"));
+        String cond = String.join(",", Collections.nCopies(keywords.size(), "?"));
         String sql = "SELECT id FROM keywords WHERE name in (" + cond + ")";
         try {
             AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql);
@@ -125,8 +124,9 @@ public class BookDao {
     }
 
     private interface Dao {
+        AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE id = ?");
         AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
-        AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like '%?%'");
+        AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
     }
 }
