@@ -250,9 +250,18 @@
                     interestingBookId.innerHTML = bookInfo[0];
                     interestingBookName.innerHTML = bookInfo[1];
                     interestingBookCategory.innerHTML = bookInfo[2];
-                    interestingBookFlag.innerHTML = bookInfo[3];
+                    const bookFlag = parseInt(bookInfo[3]);
+                    const userId = parseInt(sessionStorage.getItem('userid'));
+                    if (bookFlag < -1) {
+                        interestingBookFlag.innerHTML = "不可借阅";
+                    } else if (bookFlag === userId) {
+                        interestingBookFlag.innerHTML = "借阅中";
+                    } else {
+                        interestingBookFlag.innerHTML = "可借阅";
+                    }
                     interestingBookPrice.innerHTML = bookInfo[4];
                     interestingBookComment.innerHTML = bookInfo[5];
+                    sessionStorage.setItem("borrowBookId", bookInfo[0]);
                 });
             })
         });
@@ -373,7 +382,7 @@
                 <td id="interestingBookComment"></td>
             </tr>
         </table>
-        <form>
+        <form action="<%=request.getContextPath()%>/user/borrowBook" method="get">
             <div class="action-buttons" style="justify-content: space-between">
                 <button id="deleteBtn" class="delete-btn">删除记录</button>
                 <button id="borrowBtn" class="borrow-btn">确认借阅</button>
