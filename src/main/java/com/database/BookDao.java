@@ -27,7 +27,7 @@ public class BookDao {
         return keywords;
     }
 
-    public static List<Book> search(String id, String name, List<Integer> keywords) {
+    public static List<Book> search(String id, String name, List<String> keywords) {
         List<Book> books = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
@@ -40,16 +40,16 @@ public class BookDao {
                 sql.append(" and ");
             }
             params.add(name);
-            sql.append("name like %?%");
+            sql.append("name like CONCAT('%',?,'%')");
         }
         if (keywords != null && !keywords.isEmpty()) {
             if (!sql.isEmpty()) {
                 sql.append(" and ");
             }
-            params.addAll(Arrays.asList(keywords));
+            params.addAll(keywords);
             String[] kws = new String[keywords.size()];
             for (int i = 0; i < kws.length; i++) {
-                kws[i] = keywords.get(i).toString();
+                kws[i] = keywords.get(i);
             }
             sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
             sql.append(String.join(",", kws));
@@ -61,10 +61,9 @@ public class BookDao {
         }
 
         try {
-            System.out.println(exe_sql);
             AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(exe_sql);
             if (!params.isEmpty())
-                executable.setParams(Arrays.asList(params.toArray()));
+                executable.setParams(params.toArray());
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
                 Book book = new Book();
@@ -126,7 +125,7 @@ public class BookDao {
 
     private interface Dao {
         AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
-        AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like '%?%'");
+        AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
     }
 }
