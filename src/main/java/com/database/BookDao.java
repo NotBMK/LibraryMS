@@ -81,6 +81,32 @@ public class BookDao {
         }
         return books;
     }
+    public static List<Book> getBorrowedBooksByUserId(int userId) {
+        List<Book> books = new ArrayList<>();
+        // SQL 查询获取用户借阅的书籍（未归还）
+        String sql = "SELECT b.* FROM Book b JOIN BookNa bn ON bn.bookId = b.id WHERE b.flag = ?" ;
+
+        try {
+            // 使用 AppDatabase 执行查询
+            AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql);
+            executable.setParams(userId); // 设置用户ID参数
+
+            ResultSet resultSet = executable.query();
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.id = resultSet.getInt("id");
+                book.name = resultSet.getString("name");
+                book.category = resultSet.getInt("categoryId");
+                book.flag = resultSet.getInt("flag");
+                book.price = resultSet.getDouble("price");
+                book.comment = resultSet.getString("comment");
+                books.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
 
     private static List<Integer> getKeywordsId(String... keywords) {
         List<Integer> ids = new ArrayList<>();

@@ -1,0 +1,23 @@
+/* 基础表格样式 */
+.book-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+.book-info-table th,
+.book-info-table td {
+    padding: 10px;
+    text-align: left;
+}
+
+/* 表头样式 */
+.book-info-table th {
+    font-weight: bold;
+    width: 30%; /* 固定表头宽度 */
+}
+
+/* 内容样式 */
+.book-info-table td {
+    width: 70%; /* 固定内容宽度 */
+}

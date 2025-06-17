@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+    <link rel="stylesheet" href="../style/search_bar.css">
+    <link rel="stylesheet" href="../style/popup_window.css">
+
+
+
+    <div class="search-container" style="width: 100%;">
+        <form class="search-form">
+            <input type="text" placeholder="书籍ID"/>
+            <input type="text" placeholder="书籍标题"/>
+            <button type="submit">Search</button>
+        </form>
+
+        <div>
+            <a href="#" class="popup-link" onclick="openPopup()">点我</a>
+            <div class="popup-overlay" id="popup-overlay"></div>
+            <div class="popup" id="popup">
+                <button class="popup-close-button" onclick="closePopup()">X</button>
+                <h2>BiaoTi</h2>
+                <p>Contents...</p>
+                <p>Contents...</p>
+                <p>Contents...</p>
+            </div>
+
+
+        </div>
+        <script>
+            function openPopup() {
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("popup-overlay").style.display = "block";
+            }
+
+            function closePopup() {
+                document.getElementById("popup").style.display = "none";
+                document.getElementById("popup-overlay").style.display = "none";
+            }
+        </script>
+    </div>
+</body>
+</html>
