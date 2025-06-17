@@ -2,13 +2,13 @@ package com.database;
 
 import com.entities.Action;
 import com.entities.Book;
-
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.temporal.ChronoUnit;
 
 public class BookDao {
 
@@ -126,11 +126,151 @@ public class BookDao {
         return ids;
     }
 
+    public static List<Book> searchNA(int bookId, String bookname, int category, String comment) {
+        List<Book> bookList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Book WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (bookId > 0) {
+            sql.append(" AND id = ?");
+            params.add(bookId);
+        }
+
+        if (bookname != null && !bookname.isEmpty()) {
+            sql.append(" AND name LIKE ?");
+            params.add("%" + bookname + "%");
+        }
+
+        if (category > 0) {
+            sql.append(" AND categoryId = ?");
+            params.add(category);
+        }
+
+        if (comment != null && !comment.isEmpty()) {
+            sql.append(" AND comment LIKE ?");
+            params.add("%" + comment + "%");
+        }
+
+        try {
+            AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql.toString());
+            if (!params.isEmpty()) {
+                executable.setParams(params.toArray());
+            }
+            ResultSet rs = executable.query();
+            while (rs.next()) {
+                Book book = new Book();
+                book.id = rs.getInt("id");
+                book.name = rs.getString("name");
+                book.category = Book.Category.getCategory(rs.getInt("categoryId"));
+                book.flag = rs.getInt("flag");
+                book.price = rs.getDouble("price");
+                book.comment = rs.getString("comment");
+
+                if (book.flag > 0) {
+                    // 使用接口调用 BookNA 查询
+                    synchronized (Dao.findBookNAByBook) {
+                        Dao.findBookNAByBook.setParams(book.id);
+                        ResultSet naRs = Dao.findBookNAByBook.query();
+                        if (naRs.next()) {
+                            java.sql.Date endDate = naRs.getDate("endDate");
+                            LocalDate today = LocalDate.now();
+                            LocalDate endLocalDate = endDate.toLocalDate();
+
+                            long daysUntilEnd = ChronoUnit.DAYS.between(today, endLocalDate);
+                            book.loanPeriod = (int) daysUntilEnd;
+                        } else {
+                            book.loanPeriod = 0;
+                        }
+                    }
+                } else {
+                    book.loanPeriod = 0;
+                }
+
+                bookList.add(book);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bookList;
+    }
+
+    public static boolean updateBookInfo(Book book) {
+        try {
+            synchronized (Dao.updateBookInfo) {
+                Dao.updateBookInfo.setParams(
+                        book.name,
+                        book.category.ordinal(), // 枚举转 int
+                        book.price,
+                        book.comment,
+                        book.id
+                );
+                return Dao.updateBookInfo.update()==1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static Book getBookById(int bookId) {
+        try {
+            synchronized (Dao.findById) {
+                Dao.findById.setParams(bookId);
+                ResultSet rs = Dao.findById.query();
+                if (rs.next()) {
+                    return fromResultSet(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean addBook(Book book) {
+        try {
+            synchronized (Dao.addBook) {
+                Dao.addBook.setParams(
+                        book.name,
+                        book.category.ordinal(),
+                        book.price,
+                        book.comment != null ? book.comment : "",
+                        book.flag
+                );
+                Dao.addBook.update();
+                ResultSet rs = Dao.getLastInsertId.query();
+
+                if (rs.next()) {
+                    book.id = rs.getInt(1);
+                    //System.out.println("Book added with ID: " + book.id);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
+
+
     private interface Dao {
         AppDatabase.Executable findIdsByKeyword = AppDatabase.getInstance().getExecutable("SELECT id FROM keyword WHERE keyword.keyword like CONCAT('%',?,'%')");
         AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
         AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = ? WHERE id = ?");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
+        AppDatabase.Executable findBookNAByBook = AppDatabase.getInstance().getExecutable("SELECT * FROM BookNA WHERE bookId = ?");
+        AppDatabase.Executable updateBookInfo = AppDatabase.getInstance().getExecutable(
+                "UPDATE Book SET name=?, categoryId=?,  price=?, comment=? WHERE id=?"
+        );
+        AppDatabase.Executable addBook = AppDatabase.getInstance().getExecutable(
+                "INSERT INTO Book(name, categoryId, price, comment, flag) VALUES (?, ?, ?, ?, ?)"
+        );
+        AppDatabase.Executable getLastInsertId = AppDatabase.getInstance().getExecutable("SELECT LAST_INSERT_ID()");
     }
 }

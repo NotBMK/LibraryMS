@@ -212,26 +212,26 @@
         <div class="function-card">
             <div class="function-icon">📚</div>
             <div class="function-title">图书管理</div>
-            <div class="function-desc">处理图书有关情况</div>
+            <div class="function-desc">录入、查看图书</div>
             <a href="manageBook.jsp" class="function-btn">点击管理</a>
         </div>
 
         <div class="function-card">
             <div class="function-icon">👥</div>
             <div class="function-title">用户管理</div>
-            <div class="function-desc">查看用户情况</div>
+            <div class="function-desc">新增、查看用户情况</div>
             <a href="manageUser.jsp" class="function-btn">点击管理</a>
         </div>
 
         <div class="function-card">
             <div class="function-icon">💼</div>
             <div class="function-title">用户业务</div>
-            <div class="function-desc">处理用户业务</div>
-            <a href="userService.jsp" class="function-btn">查找图书</a>
+            <div class="function-desc">处理用户业务,借还和意外情况</div>
+            <a href="userService.jsp" class="function-btn">点击办理</a>
         </div>
 
         <div class="function-card">
-            <div class="function-icon">⚠️</div>
+            <div class="function-icon">📜️</div>
             <div class="function-title">历史记录</div>
             <div class="function-desc">查看图书馆内所有历史操作</div>
             <a href="historyView.jsp" class="function-btn">点击查看</a>
