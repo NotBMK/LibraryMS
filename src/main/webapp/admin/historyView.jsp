@@ -70,11 +70,11 @@
             %>
                 <tr>
                     <td><%= act.actType.toString() %></td>
-                    <td><%= act.userId %></td>
+                    <td><%= act.userId > 0 ? act.userId : "" %></td>
                     <td><%= act.bookId %></td>
                     <td><%= act.actDate.toString() %></td>
-                    <td><%= act.endDate.toString() %></td>
-                    <td><%= act.comment %></td>
+                    <td><%= act.endDate == null ? "" : act.endDate.toString() %></td>
+                    <td><%= act.comment.isEmpty() ? "" : act.comment %></td>
                 </tr>
             <%
                 }

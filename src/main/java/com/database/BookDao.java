@@ -246,6 +246,7 @@ public class BookDao {
                     //System.out.println("Book added with ID: " + book.id);
                 }
             }
+            ActionDao.insert(Action.ActType.ADD_BOOK, -1, book.id, Date.valueOf(LocalDate.now()), null, "图书入库");
             return true;
         } catch (Exception e) {
             e.printStackTrace();

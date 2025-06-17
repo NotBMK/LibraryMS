@@ -204,9 +204,35 @@ public class UserDao {
         return false;
     }
 
+    public static List<User> loadAllReader() {
+        List<User> userList = new ArrayList<>();
+        try {
+            synchronized (Dao.loadAllReader) {
+                ResultSet rs = Dao.loadAllReader.query();
+                while (rs.next()) {
+                    userList.add(fromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
 
+    public static User fromResultSet(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.id = resultSet.getInt("id");
+        user.name = resultSet.getString("name");
+        user.type = User.Type.fromInt(resultSet.getInt("type"));
+        user.gender = User.Gender.fromInt(resultSet.getInt("gender"));
+        user.bookAmount = resultSet.getInt("borrowCount");
+        user.loanPeriod = resultSet.getInt("loanPeriod");
+        user.comment = resultSet.getString("comment");
+        return user;
+    }
 
     private interface Dao {
+        AppDatabase.Executable loadAllReader = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE type = 0");
         AppDatabase.Executable increaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount+1 WHERE id=?");
         AppDatabase.Executable getName = AppDatabase.getInstance().getExecutable("SELECT name FROM User WHERE name=?");
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");

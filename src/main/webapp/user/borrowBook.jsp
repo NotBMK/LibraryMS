@@ -251,16 +251,16 @@
                     interestingBookCategory.innerHTML = bookInfo[2];
                     const bookFlag = parseInt(bookInfo[3]);
                     const userId = parseInt(<%=session.getAttribute("userId")%>);
-                    if (bookFlag < -1) {
-                        borrowBtn.textContent = interestingBookFlag.innerHTML = "不可借阅"
-                        borrowBtn.disabled = true;
-                    } else if (bookFlag === userId) {
+                    if (bookFlag === userId) {
                         borrowBtn.textContent = interestingBookFlag.innerHTML = "借阅中";
                         borrowBtn.disabled = true;
-                    } else {
+                    } else if (bookFlag === -1) {
                         interestingBookFlag.innerHTML = "可借阅";
                         borrowBtn.disabled = false;
                         borrowBtn.textContent = "确认借阅";
+                    } else {
+                        borrowBtn.textContent = interestingBookFlag.innerHTML = "不可借阅"
+                        borrowBtn.disabled = true;
                     }
                     interestingBookPrice.innerHTML = bookInfo[4];
                     interestingBookComment.innerHTML = bookInfo[5];

@@ -103,19 +103,19 @@ public class User {
     }
 
     public String getGenderDisplay() {
-        switch(this.gender) {
-            case MALE: return "男";
-            case FEMALE: return "女";
-            default: return "其他";
-        }
+        return switch (this.gender) {
+            case MALE -> "男";
+            case FEMALE -> "女";
+            default -> "其他";
+        };
     }
 
     public String getTypeDisplay() {
-        switch(this.type) {
-            case ADMIN: return "管理员";
-            case ROOT: return "超级管理员";
-            default: return "普通用户";
-        }
+        return switch (this.type) {
+            case ADMIN -> "管理员";
+            case ROOT -> "超级管理员";
+            default -> "普通用户";
+        };
     }
 
 }

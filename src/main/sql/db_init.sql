@@ -43,15 +43,15 @@ CREATE TABLE IF NOT EXISTS BookKeyword(
 CREATE TABLE IF NOT EXISTS BookNA(
     bookId int PRIMARY KEY NOT NULL,
     startDate DATE NOT NULL ,
-    endDate DATE NOT NULL,
+    endDate DATE,
     FOREIGN KEY (bookId) REFERENCES Book(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Action(
     actType int NOT NULL,
-    userId int NOT NULL,
+    userId int,
     bookId int NOT NULL,
     actDate Date NOT NULL ,
-    endDate Date NOT NULL,
+    endDate Date,
     comment varchar(256)
 )
