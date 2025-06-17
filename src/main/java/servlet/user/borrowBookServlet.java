@@ -14,7 +14,6 @@ import java.util.List;
 import java.io.IOException;
 
 @WebServlet("/user/borrowBook")
-
 public class borrowBookServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -26,18 +25,6 @@ public class borrowBookServlet extends HttpServlet {
         // 获取表单数据
         String name = request.getParameter("bookName");
         String id = request.getParameter("bookId");
-        String kws = request.getParameter("bookKeyword");
-
-        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
-        System.out.println("Found " + books.size() + " books.");
-
-        if (books.isEmpty()) {
-            request.setAttribute("error", "未找到相关图书");
-            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-        } else {
-            request.setAttribute("books", books);
-            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-        }
     }
 
 }

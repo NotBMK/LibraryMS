@@ -1,8 +1,5 @@
 package com.entities;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Book {
     public static final int GOOD = -1;
     public static final int BROKEN = -2;
@@ -31,5 +28,9 @@ public class Book {
         public String toString() {
             return keyword;
         };
+    }
+
+    public String toString() {
+        return String.format("%d,%s,%s,%s,%.2f,%s", id, name, category, flag == -1 ? "GOOD" : "BAD", price, comment);
     }
 }
