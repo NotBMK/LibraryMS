@@ -84,7 +84,7 @@ public class UserDao {
     public static boolean updateUserInfo(User user) {
         try {
             synchronized (Dao.updateUserInfo) {
-                return Dao.updateUserInfo.setParams( user.name,  user.gender.getInt(), user.comment, user.id).update() == 1;
+                return Dao.updateUserInfo.setParams( user.name,  user.gender.getInt(), user.comment,user.type.getInt(), user.id).update() == 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -201,7 +201,7 @@ public class UserDao {
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");
         AppDatabase.Executable getUserById = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE id=?");
-        AppDatabase.Executable updateUserInfo = AppDatabase.getInstance().getExecutable("UPDATE User SET name=?, gender=?, comment=? WHERE id=?");
+        AppDatabase.Executable updateUserInfo = AppDatabase.getInstance().getExecutable("UPDATE User SET name=?, gender=?, comment=?,type=? WHERE id=?");
         AppDatabase.Executable updatePassword = AppDatabase.getInstance().getExecutable("UPDATE User SET pass=? WHERE id=?");
         AppDatabase.Executable adminRegister = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender, comment) VALUES (?, ?, ?, ?,?)");
         AppDatabase.Executable getLastInsertId = AppDatabase.getInstance().getExecutable("SELECT LAST_INSERT_ID()");

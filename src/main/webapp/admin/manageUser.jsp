@@ -144,6 +144,21 @@
 </script>
 <% return; } %>
 
+<%-- 添加 alert 消息提示 --%>
+<% if (request.getSession().getAttribute("successMsg") != null) { %>
+<script>
+    alert('<%= request.getSession().getAttribute("successMsg") %>');
+    <% request.getSession().removeAttribute("successMsg"); %>
+</script>
+<% } %>
+
+<% if (request.getSession().getAttribute("errorMsg") != null) { %>
+<script>
+    alert('<%= request.getSession().getAttribute("errorMsg") %>');
+    <% request.getSession().removeAttribute("errorMsg"); %>
+</script>
+<% } %>
+
 <div class="container">
     <div class="header">
         <h2>用户管理</h2>
@@ -182,7 +197,7 @@
     </div>
 
 
-<%-- 查询结果展示 --%>
+    <%-- 查询结果展示 --%>
     <table class="user-table">
         <thead>
         <tr>
@@ -192,6 +207,7 @@
             <th>借阅数量</th>
             <th>借阅期限</th>
             <th>备注信息</th>
+            <th>操作</th> <%-- 新增操作列 --%>
         </tr>
         </thead>
         <tbody>
@@ -200,26 +216,33 @@
             if (users != null && !users.isEmpty()) {
                 for (User user : users) {
         %>
-        <tr onclick="window.location.href='editAdminInfo.jsp?userId=<%= user.getId() %>'">
+        <tr>
             <td><%= user.getName() %></td>
             <td><%= user.getGenderDisplay() %></td>
             <td><%= user.getTypeDisplay() %></td>
             <td><%= user.getBookAmount() %></td>
             <td><%= user.getLoanPeriod() %> 天</td>
             <td><%= user.getComment() %></td>
+            <td style="white-space: nowrap;">
+                <!-- 编辑按钮 -->
+                <button class="btn edit-btn" onclick="window.location.href='adminEditUserInfo.jsp?userId=<%= user.getId() %>'">编辑</button>
+                <!-- 删除按钮 -->
+                <%--<button class="btn delete-btn" onclick="if(confirm('确定要删除该用户吗？')) window.location.href='deleteUser.jsp?userId=<%= user.getId() %>'">删除</button> --%>
+            </td>
         </tr>
         <%
             }
         } else {
         %>
         <tr>
-            <td colspan="6" style="text-align:center;">暂无用户信息</td>
+            <td colspan="7" style="text-align:center;">暂无用户信息</td>
         </tr>
         <%
             }
         %>
         </tbody>
     </table>
+
 
     <div style="margin-top: 20px;">
         <button onclick="window.location.href='home.jsp'" class="btn back-btn">返回主页</button>
