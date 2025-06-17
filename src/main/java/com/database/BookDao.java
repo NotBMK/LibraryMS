@@ -124,6 +124,7 @@ public class BookDao {
     }
 
     private interface Dao {
+        AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE id = ?");
         AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");

@@ -24,7 +24,8 @@ public class borrowBookServlet extends HttpServlet {
 
         // 获取表单数据
         String id = request.getParameter("borrowBookId");
+        System.out.println(id);
+
 
     }
-
 }

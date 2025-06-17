@@ -261,7 +261,7 @@
                     }
                     interestingBookPrice.innerHTML = bookInfo[4];
                     interestingBookComment.innerHTML = bookInfo[5];
-                    sessionStorage.setItem("borrowBookId", bookInfo[0]);
+                    sessionStorage.setItem()
                 });
             })
         });
