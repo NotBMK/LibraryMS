@@ -14,6 +14,20 @@ import java.time.temporal.ChronoUnit;
 public class BookDao {
 
     private BookDao() {}
+    public static boolean borrowBook(int userId, int bookId, int period) {
+        boolean res = false;
+        try {
+            synchronized (Dao.insertBorrowBook) {
+                res = Dao.insertBorrowBook.setParams(bookId, period).update() == 1 && Dao.borrowBook.setParams(userId, bookId).update() == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (res && UserDao.updateUserBorrowCount(userId)) {
+            return true;
+        }
+        return false;
+    }
 
     public static List<Book.Keyword> getAllKeywords() {
         List<Book.Keyword> keywords = new ArrayList<>();
@@ -261,6 +275,7 @@ public class BookDao {
 
     private interface Dao {
         AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE id = ?");
+        AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
         AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
