@@ -7,17 +7,31 @@ public class Book {
 
     public int id;
     public String name;
-    public int category;
+    public Category category;
     public int flag = GOOD;
     public double price;
     public String comment;
 
-    public static class Category {
-        public int id;
-        public String name;
+    public enum Category {
+        NOVEL("小说"),
+        POETRY("诗歌"),
+        BIOGRAPHY("传记"),
+        TEXT("教科书"),
+        REFERENCE("参考书");
+
+
+        public final String value;
+
+        Category(String value) {
+            this.value = value;
+        }
+
+        public static Category getCategory(int value) {
+            return values()[value];
+        }
 
         public String toString() {
-            return name;
+            return value;
         }
     }
 

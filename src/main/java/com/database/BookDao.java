@@ -3,12 +3,25 @@ package com.database;
 import com.entities.Book;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class BookDao {
 
     private BookDao() {}
+
+    public static boolean borrowBook(int userId, int bookId, int period) {
+        boolean res = false;
+        try {
+           synchronized (Dao.insertBorrowBook) {
+               res = Dao.insertBorrowBook.setParams(bookId, period).update() == 1 && Dao.borrowBook.setParams(userId, bookId).update() == 1;
+           }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res && UserDao.updateUserBorrowCount(userId);
+    }
 
     public static List<Book.Keyword> getAllKeywords() {
         List<Book.Keyword> keywords = new ArrayList<>();
@@ -68,14 +81,7 @@ public class BookDao {
                 executable.setParams(params.toArray());
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,19 +100,23 @@ public class BookDao {
 
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return books;
+    }
+
+    public static Book fromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.id = resultSet.getInt("id");
+        book.name = resultSet.getString("name");
+        book.category = Book.Category.getCategory(resultSet.getInt("categoryId"));
+        book.flag = resultSet.getInt("flag");
+        book.price = resultSet.getDouble("price");
+        book.comment = resultSet.getString("comment");
+        return book;
     }
 
     private static List<Integer> getKeywordsId(List<String> keywords) {
@@ -126,6 +136,8 @@ public class BookDao {
     }
 
     private interface Dao {
+        AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
+        AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = ? WHERE id = ?");
         AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
