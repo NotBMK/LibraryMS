@@ -11,8 +11,10 @@ public class Book {
     public int flag = GOOD;
     public double price;
     public String comment;
+    public int loanPeriod;
 
     public enum Category {
+        UNKNOWN("未知"),
         NOVEL("小说"),
         POETRY("诗歌"),
         BIOGRAPHY("传记"),
@@ -59,5 +61,14 @@ public class Book {
             return "该书已损坏或丢失，不在库";
     }
 
+    public String getLoanPeriodDisplay() {
+        if (flag == GOOD) {
+            return "可借阅";
+        } else if (flag > 0) {
+            return loanPeriod + " 天";
+        } else {
+            return "暂不可用";
+        }
+    }
 
 }

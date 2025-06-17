@@ -26,15 +26,15 @@ public class searchBookServlet extends HttpServlet {
         String id = request.getParameter("bookId").trim();
         String kws = request.getParameter("bookKeyword").trim();
 
-        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
-        System.out.println("Found " + books.size() + " books.");
-
-        if (books.isEmpty()) {
-            request.setAttribute("error", "未找到相关图书");
-            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-        } else {
-            request.setAttribute("books", books);
-            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-        }
+//        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
+//        System.out.println("Found " + books.size() + " books.");
+//
+//        if (books.isEmpty()) {
+//            request.setAttribute("error", "未找到相关图书");
+//            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+//        } else {
+//            request.setAttribute("books", books);
+//            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+//        }
     }
 }

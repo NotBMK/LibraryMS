@@ -222,7 +222,7 @@
             <td><%= user.getTypeDisplay() %></td>
             <td><%= user.getBookAmount() %></td>
             <td><%= user.getLoanPeriod() %> 天</td>
-            <td><%= user.getComment() %></td>
+            <td><%= user.getComment() != null ? user.getComment() : "" %></td>
             <td style="white-space: nowrap;">
                 <!-- 编辑按钮 -->
                 <button class="btn edit-btn" onclick="window.location.href='adminEditUserInfo.jsp?userId=<%= user.getId() %>'">编辑</button>

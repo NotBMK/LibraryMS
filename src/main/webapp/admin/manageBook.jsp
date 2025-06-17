@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.entities.Book" %>
-
+<%@ page import="java.util.Arrays" %>
 <html>
 <head>
   <title>图书管理</title>
@@ -161,7 +161,7 @@
 
 <div class="container">
   <div class="header">
-    <h2>用户管理</h2>
+    <h2>图书管理</h2>
     <div class="user-area">
       <div class="user-circle">
         <%= session.getAttribute("username").toString().substring(0, 1) %>
@@ -174,14 +174,18 @@
     </div>
   </div>
 
-  <form action="<%= request.getContextPath() %>/admin/searchUsers" method="post" class="search-form">
+  <form action="<%= request.getContextPath() %>/admin/searchBooks" method="post" class="search-form">
     <input type="text" name="bookId" placeholder="图书编号">
     <input type="text" name="bookname" placeholder="图书名">
     <select name="category">
-      <option value="">性别</option>
-      <option value="MALE">男</option>
-      <option value="FEMALE">女</option>
-      <option value="OTHER">其他</option>
+      <option value="">全部类别</option>
+      <%
+        for (Book.Category category : Book.Category.values()) {
+      %>
+      <option value="<%= Arrays.asList(Book.Category.values()).indexOf(category) %>"><%= category.toString() %></option>
+      <%
+        }
+      %>
     </select>
     <input type="text" name="comment" placeholder="备注信息">
 
@@ -222,9 +226,10 @@
       <td><%= book.name %></td>
       <td><%= book.category %></td>
       <td><%= book.getFlagDisplay() %></td>
-      <td><%= book.getLoanPeriod() %> 天</td>
+      <td><%= book.getLoanPeriodDisplay() %></td>
       <td><%= book.price %> 元</td>
-      <td><%= book.comment %></td>
+      <td><%= book.comment!= null ? book.comment : "" %></td>
+
       <td style="white-space: nowrap;">
         <!-- 编辑按钮 -->
         <button class="btn edit-btn" onclick="window.location.href='adminEditBookInfo.jsp?bookId=<%= book.id %>'">编辑</button>
