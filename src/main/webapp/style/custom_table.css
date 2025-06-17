@@ -1,8 +1,14 @@
 .custom-table-container {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    padding: 20px;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(129, 140, 248, 0.1),
+    0 8px 10px -6px rgba(129, 140, 248, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.custom-table-container:hover {
+    transform: scale(1.01);
 }
 
 .custom-table {
@@ -11,13 +17,16 @@
 }
 
 .custom-table th, .custom-table td {
-    padding: 10px;
+    padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
 .custom-table th {
-    background-color: #f5f5f5;
+    background: linear-gradient(to right, rgba(129, 140, 248, 0.3), rgba(165, 180, 252, 0.3));
+    color: var(--text-medium);
 }
 
 .custom-table tbody tr {
@@ -25,7 +34,7 @@
 }
 
 .custom-table tbody tr:hover {
-    transform: scale(1.05);
-    background-color: #F9F9F9;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transform: scale(1.02);
+    background-color: rgba(129, 140, 248, 0.1);
+    box-shadow: 0 4px 6px rgba(129, 140, 248, 0.1);
 }
