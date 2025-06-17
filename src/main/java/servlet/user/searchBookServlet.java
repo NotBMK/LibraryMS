@@ -22,19 +22,19 @@ public class searchBookServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         // 获取表单数据
-        String name = request.getParameter("bookName").trim();
-        String id = request.getParameter("bookId").trim();
-        String kws = request.getParameter("bookKeyword").trim();
+        String name = request.getParameter("bookName");
+        String id = request.getParameter("bookId");
+        String kws = request.getParameter("bookKeyword");
 
-//        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
-//        System.out.println("Found " + books.size() + " books.");
-//
-//        if (books.isEmpty()) {
-//            request.setAttribute("error", "未找到相关图书");
-//            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-//        } else {
-//            request.setAttribute("books", books);
-//            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-//        }
+        List<Book> books = BookDao.search(id, name, kws.isEmpty() ? null : Arrays.asList(kws.split("\\s+")));
+        System.out.println("Found " + books.size() + " books.");
+
+        if (books.isEmpty()) {
+            request.setAttribute("error", "未找到相关图书");
+            request.getRequestDispatcher("/user/searchBook.jsp").forward(request, response);
+        } else {
+            request.setAttribute("books", books);
+            request.getRequestDispatcher("/user/searchBook.jsp").forward(request, response);
+        }
     }
 }

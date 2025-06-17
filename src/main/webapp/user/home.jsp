@@ -220,7 +220,7 @@
             <div class="function-icon">📦</div>
             <div class="function-title">图书归还</div>
             <div class="function-desc">归还已借阅的图书并查看借阅记录</div>
-            <a href="returnBook.jsp" class="function-btn">归还图书</a>
+            <a href="<%= request.getContextPath() %>/user/returnBook" class="function-btn">归还图书</a>
         </div>
 
         <div class="function-card">

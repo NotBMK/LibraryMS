@@ -3,13 +3,7 @@
 <%@ page import="java.util.List" %>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>图书管理信息系统 - 图书借阅</title>
-    <link rel="stylesheet" href="../style/custom_checkbox.css">
-    <link rel="stylesheet" href="../style/search_bar.css">
-    <link rel="stylesheet" href="../style/popup_window.css">
-    <link rel="stylesheet" href="../style/book_list.css">
-    <link rel="stylesheet" href="../style/book_info_table.css">
+    <title>图书管理信息系统 - 图书归还</title>
     <style>
         body {
             background-color: #E3E3E3;
@@ -107,6 +101,28 @@
             background-color: #0b7dda;
         }
 
+        .book-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .book-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .book-table th, .book-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .book-table th {
+            background-color: #f5f5f5;
+        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -129,21 +145,13 @@
             background-color: #d32f2f;
         }
 
-        .borrow-btn {
-            user-select: none;
+        .return-btn {
             background-color: #4CAF50;
             color: white;
         }
 
-        .borrow-btn:hover {
+        .return-btn:hover {
             background-color: #388E3C;
-        }
-
-        .borrow-btn:disabled {
-            user-select: none;
-            background-color: #777777;
-            pointer-events: none;
-            cursor: not-allowed;
         }
 
         .empty-message {
@@ -164,6 +172,7 @@
             const searchForm = document.getElementById('searchForm');
             const bookList = document.getElementById('bookList');
             const emptyMessage = document.getElementById('emptyMessage');
+            const returnBtn = document.getElementById('returnBtn');
 
             let menuTimeout;
 
@@ -206,68 +215,36 @@
                 e.stopPropagation();
             });
 
-            <% if (request.getAttribute("books") != null) { %>
+            <% if (request.getAttribute("borrowedBooks") != null) { %>
                 document.getElementById('initMessage').style.display = 'none';
-                <% if (!((List<Book>)request.getAttribute("books")).isEmpty()) { %>
+            <% if (!((List<Book>)request.getAttribute("borrowedBooks")).isEmpty()) { %>
                 document.getElementById('bookList').style.display = 'block';
-            <%
-                } else {
-            %>
+            <% } else { %>
                 document.getElementById('noResult').style.display = 'block';
-            <%
+            <% } %>
+            <% } %>
+
+            // 按钮点击事件
+            returnBtn.addEventListener('click', function() {
+                const checkedBooks = document.querySelectorAll('input[name="book"]:checked');
+                if (checkedBooks.length === 0) {
+                    alert('请先选择要归还的图书！');
+                    return;
                 }
-            }
-            %>
+
+                if (confirm(`确定要归还选中的 ${checkedBooks.length} 本图书吗？`)) {
+                    // 这里应该是AJAX请求后端处理借还书逻辑
+                    alert('还书成功！');
+                    // 清空已选图书
+                    checkedBooks.forEach(book => book.checked = false);
+                }
+            });
 
             document.getElementById('searchForm').addEventListener('submit', function(e) {
+                //e.preventDefault();
                 document.getElementById('initMessage').style.display = 'none';
             });
-
-            document.querySelectorAll('.popup-link').forEach(link => {
-                // 借书窗口设置
-                const popup = document.getElementById("popup");
-                const popupOverlay = document.getElementById("popup-overlay");
-                const interestingBookId = document.getElementById("interestingBookId");
-                const interestingBookName = document.getElementById("interestingBookName");
-                const interestingBookCategory = document.getElementById("interestingBookCategory");
-                const interestingBookFlag = document.getElementById("interestingBookFlag");
-                const interestingBookPrice = document.getElementById("interestingBookPrice");
-                const interestingBookComment = document.getElementById("interestingBookComment");
-                const borrowBtn = document.getElementById("borrowBtn");
-                const borrowForm = document.getElementById("borrowForm");
-
-                const popupCloseBtn = document.querySelector(".popup-close-button");
-                popupCloseBtn.addEventListener('click', function () {
-                    popup.style.display = "none";
-                    popupOverlay.style.display = "none";
-                });
-
-                link.addEventListener('click', function() {
-                    popup.style.display = "block";
-                    popupOverlay.style.display = "block";
-                    const bookInfo = link.dataset.book.split(",");
-                    interestingBookId.innerHTML = bookInfo[0];
-                    interestingBookName.innerHTML = bookInfo[1];
-                    interestingBookCategory.innerHTML = bookInfo[2];
-                    const bookFlag = parseInt(bookInfo[3]);
-                    const userId = parseInt(<%=session.getAttribute("userId")%>);
-                    if (bookFlag < -1) {
-                        borrowBtn.textContent = interestingBookFlag.innerHTML = "不可借阅"
-                        borrowBtn.disabled = true;
-                    } else if (bookFlag === userId) {
-                        borrowBtn.textContent = interestingBookFlag.innerHTML = "借阅中";
-                        borrowBtn.disabled = true;
-                    } else {
-                        interestingBookFlag.innerHTML = "可借阅";
-                        borrowBtn.disabled = false;
-                        borrowBtn.textContent = "确认借阅";
-                    }
-                    interestingBookPrice.innerHTML = bookInfo[4];
-                    interestingBookComment.innerHTML = bookInfo[5];
-                    document.getElementById("borrowBookId").value = bookInfo[0];
-                });
-            });
-        })
+        });
     </script>
 </head>
 <body>
@@ -277,13 +254,11 @@
     alert('您尚未登录，请先登录！');
     window.location.href='<%= request.getContextPath() %>/login.jsp';
 </script>
-<%
-    return; }
-%>
+<% return; } %>
 
 <div class="container">
     <div class="header">
-        <h2>图书借阅</h2>
+        <h2>图书归还</h2>
         <div class="user-area">
             <div class="user-circle">
                 <%= session.getAttribute("username").toString().substring(0, 1) %>
@@ -296,27 +271,19 @@
         </div>
     </div>
 
-    <div class="search-container">
-        <form id="searchForm" class="search-form" action="<%= request.getContextPath() %>/user/borrowBook" method="POST" accept-charset="UTF-8">
-                <input type="text" name="bookId" id="bookId" placeholder="图书ID">
-                <input type="text" name="bookName" id="bookName" placeholder="图书名称">
-                <button class="search-button" name="submitButton" type="submit">搜索</button>
-        </form>
-    </div>
-
     <div id="initMessage" class="empty-message">
-        请输入图书ID或名称进行搜索
+        请选择您要归还的图书
     </div>
 
     <%
-        request.setAttribute("borrowBookId",-1);
-        List<Book> books = (List<Book>) request.getAttribute("books");
+        List<Book> books = (List<Book>) request.getAttribute("borrowedBooks");
         if (books != null && !books.isEmpty()) {
     %>
     <div id="bookList" class="book-list">
         <table id="bookTable" class="book-table">
             <thead>
             <tr>
+                <th>选择</th>
                 <th>图书ID</th>
                 <th>图书名称</th>
                 <th>分类</th>
@@ -328,13 +295,14 @@
             <%
                 for (Book book : books) {
             %>
-                <tr class="popup-link" data-book="<%=book.toString()%>">
-                    <td><%= String.format("%05d", book.id) %></td>
-                    <td><%= book.name %></td>
-                    <td><%= book.category %></td>
-                    <td><%= book.flag == Book.GOOD ? "可借阅" : "不可借阅" %></td>
-                    <td><%= book.comment %></td>
-                </tr>
+            <tr>
+                <td><input type="checkbox" name="book" value="<%= book.id %>"></td>
+                <td><%= book.id %></td>
+                <td><%= book.name %></td>
+                <td><%= book.category %></td>
+                <td><%= book.flag == -1 ? "可借阅" : "不可借阅" %></td>
+                <td><%= book.comment %></td>
+            </tr>
             <%
                 }
             %>
@@ -344,56 +312,20 @@
     <%
     } else {
     %>
-        <div id="noResult" class="empty-message">
-            未找到匹配的图书
-        </div>
+    <div id="noResult" class="empty-message">
+        您当前没有借阅任何图书
+    </div>
     <%
         }
     %>
 
+    <div class="action-buttons">
+        <button id="returnBtn" class="return-btn">确认还书</button>
+    </div>
+
     <!-- 返回按钮 -->
     <div class="action-buttons" style="margin-top: 20px;">
         <button class="back-btn" onclick="window.location.href='home.jsp'">返回系统主页</button>
-    </div>
-    <div class="popup-overlay" id="popup-overlay"></div>
-    <div class="popup" id="popup">
-        <button class="popup-close-button">X</button>
-        <h2>确定要借这本书吗？</h2>
-        <table class="book-info-table">
-            <tr>
-                <th>书籍ID</th>
-                <td id="interestingBookId"></td>
-            </tr>
-            <tr>
-                <th>书籍标题</th>
-                <td  id="interestingBookName"></td>
-            </tr>
-            <tr>
-                <th>书籍类别</th>
-                <td id="interestingBookCategory"></td>
-            </tr>
-            <tr>
-                <th>书籍状态</th>
-                <td id="interestingBookFlag"></td>
-            </tr>
-            <tr>
-                <th>书籍价格</th>
-                <td id="interestingBookPrice"></td>
-            </tr>
-            <tr>
-                <th>书籍备注</th>
-                <td id="interestingBookComment"></td>
-            </tr>
-        </table>
-        <form id="borrowForm" action="<%=request.getContextPath()%>/user/borrowBook" method="get">
-            <div class="action-buttons" style="justify-content: space-between">
-                <input type="hidden" name="borrowBookId" id="borrowBookId">
-                <input type="hidden" name="userId" id="userId" value="<%=session.getAttribute("userId")%>">
-                <input type="hidden" name="userLoanPeriod" id="userLoanPeriod" value="<%=session.getAttribute("userLoanPeriod")%>">
-                <button type="submit" style="width: 100%;" id="borrowBtn" class="borrow-btn">确认借阅</button>
-            </div>
-        </form>
-
     </div>
 </div>
 </body>

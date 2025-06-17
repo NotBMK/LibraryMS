@@ -23,8 +23,27 @@ public class borrowBookServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         // 获取表单数据
-        String id = request.getParameter("borrowBookId");
+        int borrowBookId = Integer.parseInt(request.getParameter("borrowBookId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int userLoadPeriod = Integer.parseInt(request.getParameter("userLoanPeriod"));
 
+        if (BookDao.borrowBook(userId, borrowBookId, userLoadPeriod)) {
+            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+        }
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("bookName");
+        String id = request.getParameter("bookId");
+
+        List<Book> books = BookDao.search(id, name, null);
+
+        if (books.isEmpty()) {
+            request.setAttribute("error", "未找到相关图书");
+            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+        } else {
+            request.setAttribute("books", books);
+            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
+        }
+    }
 }
