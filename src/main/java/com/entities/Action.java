@@ -1,29 +1,41 @@
 package com.entities;
 
-public enum Action {
-    BORROW_BOOK("图书借出"),
-    RETURN_BOOK("图书归还"),
-    ADD_BOOK("图书入库"),
-    DEL_BOOK("图书出库"),
+import java.sql.Date;
 
-    DAMAGE_BOOK("图书损坏"),
-    BOOK_LOST("图书丢失");
+public class Action {
 
-    private final String value;
+    public ActType actType;
+    public int userId;
+    public int bookId;
+    public Date actDate;
+    public Date endDate;
+    public String comment;
 
-    Action(String value) {
-        this.value = value;
-    }
+    public enum ActType {
+        BORROW_BOOK("图书借出"),
+        RETURN_BOOK("图书归还"),
+        ADD_BOOK("图书入库"),
+        DEL_BOOK("图书出库"),
 
-    public String toString() {
-        return value;
-    }
+        DAMAGE_BOOK("图书损坏"),
+        BOOK_LOST("图书丢失");
 
-    public int getInt() {
-        return ordinal();
-    }
+        private final String value;
 
-    public static Action getAction(int action_type) {
-        return values()[action_type];
+        ActType(String value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return value;
+        }
+
+        public int getInt() {
+            return ordinal();
+        }
+
+        public static ActType getAction(int action_type) {
+            return values()[action_type];
+        }
     }
 }

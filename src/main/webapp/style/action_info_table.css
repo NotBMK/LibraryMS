@@ -1,0 +1,31 @@
+.action-list {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.action-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.action-table th, .action-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.action-table th {
+    background-color: #f5f5f5;
+}
+
+.action-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.action-table tbody tr:hover {
+    transform: scale(1.05);
+    background-color: #F9F9F9;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
