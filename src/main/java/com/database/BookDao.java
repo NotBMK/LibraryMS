@@ -3,6 +3,7 @@ package com.database;
 import com.entities.Book;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,14 +69,7 @@ public class BookDao {
                 executable.setParams(params.toArray());
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,19 +88,23 @@ public class BookDao {
 
             ResultSet resultSet = executable.query();
             while (resultSet.next()) {
-                Book book = new Book();
-                book.id = resultSet.getInt("id");
-                book.name = resultSet.getString("name");
-                book.category = resultSet.getInt("categoryId");
-                book.flag = resultSet.getInt("flag");
-                book.price = resultSet.getDouble("price");
-                book.comment = resultSet.getString("comment");
-                books.add(book);
+                books.add(fromResultSet(resultSet));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return books;
+    }
+
+    public static Book fromResultSet(ResultSet resultSet) throws SQLException {
+        Book book = new Book();
+        book.id = resultSet.getInt("id");
+        book.name = resultSet.getString("name");
+        book.category = Book.Category.getCategory(resultSet.getInt("categoryId"));
+        book.flag = resultSet.getInt("flag");
+        book.price = resultSet.getDouble("price");
+        book.comment = resultSet.getString("comment");
+        return book;
     }
 
     private static List<Integer> getKeywordsId(List<String> keywords) {

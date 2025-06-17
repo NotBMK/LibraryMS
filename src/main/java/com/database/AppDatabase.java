@@ -10,7 +10,7 @@ public class AppDatabase {
             DB_NAME, DB_CHARSET, DB_TIMEZONE);
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "mysql2w0t0f5";
 
     private static volatile  AppDatabase instance = null;
 
