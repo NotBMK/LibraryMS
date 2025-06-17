@@ -23,24 +23,6 @@ public class BookDao {
         return res && UserDao.updateUserBorrowCount(userId);
     }
 
-    public static List<Book.Keyword> getAllKeywords() {
-        List<Book.Keyword> keywords = new ArrayList<>();
-        try {
-            synchronized (Dao.getAllKeywords) {
-                ResultSet resultSet = Dao.getAllKeywords.query();
-                while (resultSet.next()) {
-                    Book.Keyword keyword = new Book.Keyword();
-                    keyword.id = resultSet.getInt("id");
-                    keyword.keyword = resultSet.getString("keyword");
-                    keywords.add(keyword);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return keywords;
-    }
-
     public static List<Book> search(String id, String name, List<String> keywords) {
         List<Book> books = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -57,7 +39,7 @@ public class BookDao {
             sql.append("name like CONCAT('%',?,'%')");
         }
         if (keywords != null && !keywords.isEmpty()) {
-            List<Integer> kwIds = getKeywordsId(keywords);
+            List<Integer> kwIds = getKeywordIds(keywords);
             if (!kwIds.isEmpty()) {
                 if (!sql.isEmpty()) {
                     sql.append(" and ");
@@ -76,6 +58,7 @@ public class BookDao {
         }
 
         try {
+            System.out.println(exe_sql);
             AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(exe_sql);
             if (!params.isEmpty())
                 executable.setParams(params.toArray());
@@ -119,15 +102,16 @@ public class BookDao {
         return book;
     }
 
-    private static List<Integer> getKeywordsId(List<String> keywords) {
+    private static List<Integer> getKeywordIds(List<String> keywords) {
         List<Integer> ids = new ArrayList<>();
-        String cond = String.join(",", Collections.nCopies(keywords.size(), "?"));
-        String sql = "SELECT id FROM keywords WHERE name in (" + cond + ")";
         try {
-            AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql);
-            ResultSet resultSet = executable.query();
-            if (resultSet.next()) {
-                ids.add(resultSet.getInt("id"));
+            synchronized (Dao.findIdsByKeyword) {
+                for (String kw : keywords) {
+                    ResultSet resultSet = Dao.findIdsByKeyword.setParams(kw).query();
+                    if (resultSet.next()) {
+                        ids.add(resultSet.getInt("id"));
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,9 +120,9 @@ public class BookDao {
     }
 
     private interface Dao {
+        AppDatabase.Executable findIdsByKeyword = AppDatabase.getInstance().getExecutable("SELECT id FROM keyword WHERE keyword.keyword like CONCAT('%',?,'%')");
         AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
         AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = ? WHERE id = ?");
-        AppDatabase.Executable getAllKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
     }
