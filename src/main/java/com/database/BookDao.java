@@ -4,6 +4,7 @@ import com.entities.Book;
 
 import java.sql.ResultSet;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookDao {
 
@@ -43,17 +44,18 @@ public class BookDao {
             sql.append("name like CONCAT('%',?,'%')");
         }
         if (keywords != null && !keywords.isEmpty()) {
-            if (!sql.isEmpty()) {
-                sql.append(" and ");
+            List<Integer> kwIds = getKeywordsId(keywords);
+            if (!kwIds.isEmpty()) {
+                if (!sql.isEmpty()) {
+                    sql.append(" and ");
+                }
+                String kwSet = kwIds.stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+                sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
+                sql.append( kwSet);
+                sql.append("))");
             }
-            params.addAll(keywords);
-            String[] kws = new String[keywords.size()];
-            for (int i = 0; i < kws.length; i++) {
-                kws[i] = keywords.get(i);
-            }
-            sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
-            sql.append(String.join(",", kws));
-            sql.append("))");
         }
         String exe_sql = "SELECT * FROM Book";
         if (!sql.isEmpty()) {
@@ -107,9 +109,9 @@ public class BookDao {
         return books;
     }
 
-    private static List<Integer> getKeywordsId(String... keywords) {
+    private static List<Integer> getKeywordsId(List<String> keywords) {
         List<Integer> ids = new ArrayList<>();
-        String cond = String.join(",", Collections.nCopies(keywords.length, "?"));
+        String cond = String.join(",", Collections.nCopies(keywords.size(), "?"));
         String sql = "SELECT id FROM keywords WHERE name in (" + cond + ")";
         try {
             AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql);
