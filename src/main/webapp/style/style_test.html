@@ -6,6 +6,7 @@
 </head>
 <body>
     <link rel="stylesheet" href="../style/search_bar.css">
+    <link rel="stylesheet" href="../style/popup_window.css">
 
 
 
@@ -17,8 +18,29 @@
         </form>
 
         <div>
+            <a href="#" class="popup-link" onclick="openPopup()">点我</a>
+            <div class="popup-overlay" id="popup-overlay"></div>
+            <div class="popup" id="popup">
+                <button class="popup-close-button" onclick="closePopup()">X</button>
+                <h2>BiaoTi</h2>
+                <p>Contents...</p>
+                <p>Contents...</p>
+                <p>Contents...</p>
+            </div>
+
 
         </div>
+        <script>
+            function openPopup() {
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("popup-overlay").style.display = "block";
+            }
+
+            function closePopup() {
+                document.getElementById("popup").style.display = "none";
+                document.getElementById("popup-overlay").style.display = "none";
+            }
+        </script>
     </div>
 </body>
 </html>
