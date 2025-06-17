@@ -1,9 +1,12 @@
 package com.database;
 
+import com.entities.Action;
 import com.entities.Book;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +23,11 @@ public class BookDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return res && UserDao.updateUserBorrowCount(userId);
+        if (res && UserDao.updateUserBorrowCount(userId)) {
+            ActionDao.insert(Action.ActType.BORROW_BOOK, userId, bookId, Date.valueOf(LocalDate.now()), Date.valueOf(LocalDate.now().plusDays(period)), "");
+            return true;
+        }
+        return false;
     }
 
     public static List<Book> search(String id, String name, List<String> keywords) {

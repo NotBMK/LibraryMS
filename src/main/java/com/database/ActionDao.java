@@ -12,10 +12,10 @@ public class ActionDao {
 
     private ActionDao() {}
 
-    public static int insert(Action act, int userId, int bookId, Date actDate, Date endDate, String comment) {
+    public static int insert(Action.ActType act, int userId, int bookId, Date actDate, Date endDate, String comment) {
         try {
             synchronized (Dao.insert) {
-                return Dao.insert.setParams(act, userId, bookId, actDate, endDate, comment).update();
+                return Dao.insert.setParams(act.getInt(), userId, bookId, actDate, endDate, comment).update();
             }
         } catch (SQLException e) {
             e.printStackTrace();
