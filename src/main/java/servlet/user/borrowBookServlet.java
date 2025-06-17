@@ -23,8 +23,8 @@ public class borrowBookServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         // 获取表单数据
-        String name = request.getParameter("bookName");
-        String id = request.getParameter("bookId");
+        String id = request.getParameter("borrowBookId");
+
     }
 
 }

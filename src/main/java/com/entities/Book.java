@@ -31,6 +31,6 @@ public class Book {
     }
 
     public String toString() {
-        return String.format("%d,%s,%s,%s,%.2f,%s", id, name, category, flag == -1 ? "GOOD" : "BAD", price, comment);
+        return String.format("%d,%s,%s,%d,%.2f,%s", id, name, category, flag, price, comment);
     }
 }
