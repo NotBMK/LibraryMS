@@ -181,12 +181,14 @@
       <option value="">全部类别</option>
       <%
         for (Book.Category category : Book.Category.values()) {
+          if (category == Book.Category.UNKNOWN) continue; // 跳过 UNKNOWN
       %>
       <option value="<%= Arrays.asList(Book.Category.values()).indexOf(category) %>"><%= category.toString() %></option>
       <%
         }
       %>
     </select>
+
     <input type="text" name="comment" placeholder="备注信息">
 
     <button type="submit">搜索</button>

@@ -3,6 +3,7 @@ package com.database;
 import com.entities.Book;
 import com.entities.User;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -195,6 +196,67 @@ public class BookDao {
         return bookList;
     }
 
+    public static boolean updateBookInfo(Book book) {
+        try {
+            synchronized (Dao.updateBookInfo) {
+                Dao.updateBookInfo.setParams(
+                        book.name,
+                        book.category.ordinal(), // 枚举转 int
+                        book.price,
+                        book.comment,
+                        book.id
+                );
+                return Dao.updateBookInfo.update()==1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static Book getBookById(int bookId) {
+        try {
+            synchronized (Dao.findById) {
+                Dao.findById.setParams(bookId);
+                ResultSet rs = Dao.findById.query();
+                if (rs.next()) {
+                    return fromResultSet(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean addBook(Book book) {
+        try {
+            synchronized (Dao.addBook) {
+                Dao.addBook.setParams(
+                        book.name,
+                        book.category.ordinal(),
+                        book.price,
+                        book.comment != null ? book.comment : "",
+                        book.flag
+                );
+                Dao.addBook.update();
+                ResultSet rs = Dao.getLastInsertId.query();
+
+                if (rs.next()) {
+                    book.id = rs.getInt(1);
+                    //System.out.println("Book added with ID: " + book.id);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
 
 
     private interface Dao {
@@ -203,5 +265,12 @@ public class BookDao {
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
         AppDatabase.Executable findBookNAByBook = AppDatabase.getInstance().getExecutable("SELECT * FROM BookNA WHERE bookId = ?");
+        AppDatabase.Executable updateBookInfo = AppDatabase.getInstance().getExecutable(
+                "UPDATE Book SET name=?, categoryId=?,  price=?, comment=? WHERE id=?"
+        );
+        AppDatabase.Executable addBook = AppDatabase.getInstance().getExecutable(
+                "INSERT INTO Book(name, categoryId, price, comment, flag) VALUES (?, ?, ?, ?, ?)"
+        );
+        AppDatabase.Executable getLastInsertId = AppDatabase.getInstance().getExecutable("SELECT LAST_INSERT_ID()");
     }
 }
