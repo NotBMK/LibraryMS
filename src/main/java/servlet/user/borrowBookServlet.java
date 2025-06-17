@@ -27,9 +27,9 @@ public class borrowBookServlet extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("userId"));
         int userLoadPeriod = Integer.parseInt(request.getParameter("userLoanPeriod"));
 
-        if (BookDao.borrowBook(userId, borrowBookId, userLoadPeriod)) {
-            request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
-        }
+        BookDao.borrowBook(userId, borrowBookId, userLoadPeriod);
+
+        request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

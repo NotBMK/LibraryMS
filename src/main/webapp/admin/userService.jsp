@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.entities.User" %>
-<%@ page import="com.entities.Action" %>
-<%@ page import="com.database.ActionDao" %>
 <%@ page import="com.entities.BookRecord" %>
 <%@ page import="com.database.BookRecordDao" %>
 <%@ page import="com.entities.Book" %>
@@ -10,6 +7,9 @@
 <html>
 <link rel="stylesheet" href="../style/user_avatar.css">
 <link rel="stylesheet" href="../style/custom_table.css">
+<link rel="stylesheet" href="../style/custom_button.css">
+<link rel="stylesheet" href="../style/popup_window.css">
+<link rel="stylesheet" href="../style/book_info_table.css">
 
 <head>
 <title>用户业务</title>
@@ -22,21 +22,6 @@
     window.location.href='<%= request.getContextPath() %>/login.jsp';
 </script>
 <% return; } %>
-
-<%-- 添加 alert 消息提示 --%>
-<% if (request.getSession().getAttribute("successMsg") != null) { %>
-<script>
-    alert('<%= request.getSession().getAttribute("successMsg") %>');
-    <% request.getSession().removeAttribute("successMsg"); %>
-</script>
-<% } %>
-
-<% if (request.getSession().getAttribute("errorMsg") != null) { %>
-<script>
-    alert('<%= request.getSession().getAttribute("errorMsg") %>');
-    <% request.getSession().removeAttribute("errorMsg"); %>
-</script>
-<% } %>
 
 <div class="container">
     <div class="header">
@@ -52,6 +37,38 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 借书窗口设置
+            const link = document.querySelector(".popup-link");
+            const popup = document.getElementById("popup");
+            const popupOverlay = document.getElementById("popup-overlay");
+            const interestingBookId = document.getElementById("interestingBookId");
+            const interestingBookName = document.getElementById("interestingBookName");
+            const interestingBookCategory = document.getElementById("interestingBookCategory");
+            const interestingBookPrice = document.getElementById("interestingBookPrice");
+            const interestingBookComment = document.getElementById("interestingBookComment");
+
+            const popupCloseBtn = document.querySelector(".popup-close-button");
+            popupCloseBtn.addEventListener('click', function () {
+                popup.style.display = "none";
+                popupOverlay.style.display = "none";
+            });
+
+            link.addEventListener('click', function() {
+                popup.style.display = "block";
+                popupOverlay.style.display = "block";
+                const bookInfo = link.dataset.book.split(",");
+                interestingBookId.innerHTML = bookInfo[0];
+                interestingBookName.innerHTML = bookInfo[1];
+                interestingBookCategory.innerHTML = bookInfo[2];
+                interestingBookPrice.innerHTML = bookInfo[4];
+                interestingBookComment.innerHTML = bookInfo[5];
+                document.getElementById("CLBookId").value = bookInfo[0];
+            });
+        });
+    </script>
 
     <div class="custom-table-container">
         <table class="custom-table">
@@ -80,21 +97,13 @@
                         <td><%= bookRecord.startDate%></td>
                         <td><%= bookRecord.endDate%></td>
                         <td>
-                        <%
-                            if (book.flag == Book.LOST) {
-                        %>
-                            <button>a</button>
-                        <%
-                            } else if (book.flag == Book.BROKEN) {
-                        %>
-                            <button>b</button>
-                        <%
-                            } else {
-                        %>
-                            <button>c</button>
-                        <%
-                            }
-                        %>
+                            <%
+                                if (book.flag > 0) {
+                            %>
+                                <button class="popup-link" data-book="<%=book.toString()%>">续借</button>
+                            <%
+                                }
+                            %>
                         </td>
                     </tr>
                 <%
@@ -106,6 +115,38 @@
 
     <div style="margin-top: 20px;">
         <button onclick="window.location.href='home.jsp'" class="btn back-btn">返回主页</button>
+    </div>
+
+    <div class="popup-window" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="popup-close-button">X</button>
+        <h2>确认续借30天吗？</h2>
+        <table class="book-info-table">
+            <tr>
+                <th>书籍ID</th>
+                <td id="interestingBookId"></td>
+            </tr>
+            <tr>
+                <th>书籍标题</th>
+                <td  id="interestingBookName"></td>
+            </tr>
+            <tr>
+                <th>书籍类别</th>
+                <td id="interestingBookCategory"></td>
+            </tr>
+            <tr>
+                <th>书籍价格</th>
+                <td id="interestingBookPrice"></td>
+            </tr>
+            <tr>
+                <th>书籍备注</th>
+                <td id="interestingBookComment"></td>
+            </tr>
+        </table>
+        <form id="CL-form" action="<%= request.getContextPath() %>/admin/userService" method="get">
+            <input type="hidden" name="CLBookId" id="CLBookId" value="-1">
+            <button type="submit" style="width: 100%;" id="CLBtn" class="custom-button">确认续借</button>
+        </form>
     </div>
 </div>
 

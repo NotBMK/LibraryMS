@@ -7,7 +7,7 @@
 
 <html>
 <link rel="stylesheet" href="../style/user_avatar.css">
-<link rel="stylesheet" href="../style/action_info_table.css">
+<link rel="stylesheet" href="../style/custom_table.css">
 
 <head>
     <title>图书馆管理系统操作日志</title>
@@ -51,8 +51,8 @@
         </div>
     </div>
 
-    <div class="action-list">
-        <table class="action-table">
+    <div class="custom-table-container">
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>操作类型</th>

@@ -5,10 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>图书管理信息系统 - 图书借阅</title>
-    <link rel="stylesheet" href="../style/custom_checkbox.css">
     <link rel="stylesheet" href="../style/search_bar.css">
     <link rel="stylesheet" href="../style/popup_window.css">
-    <link rel="stylesheet" href="../style/book_list.css">
+    <link rel="stylesheet" href="../style/custom_table.css">
     <link rel="stylesheet" href="../style/book_info_table.css">
     <style>
         body {
@@ -313,8 +312,8 @@
         List<Book> books = (List<Book>) request.getAttribute("books");
         if (books != null && !books.isEmpty()) {
     %>
-    <div id="bookList" class="book-list">
-        <table id="bookTable" class="book-table">
+    <div id="bookList" class="custom-table-container">
+        <table id="bookTable" class="custom-table">
             <thead>
             <tr>
                 <th>图书ID</th>

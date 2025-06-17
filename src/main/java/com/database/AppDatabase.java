@@ -77,6 +77,7 @@ public class AppDatabase {
         }
 
         public int update() throws SQLException {
+            System.out.println("update with" + preparedStatement.toString());
             return preparedStatement.executeUpdate();
         }
     }

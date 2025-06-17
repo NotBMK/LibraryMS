@@ -26,6 +26,18 @@ public class BookRecordDao {
         return bookRecords;
     }
 
+    public static boolean continueLoan(int bookId) {
+        try {
+            synchronized (Dao.continueLoan) {
+                System.out.println(1);
+                return Dao.continueLoan.setParams(bookId).update() == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static BookRecord fromResultSet(ResultSet resultSet) throws SQLException {
         BookRecord bookRecord = new BookRecord();
         bookRecord.book = BookDao.fromResultSet(resultSet);
@@ -36,5 +48,6 @@ public class BookRecordDao {
 
     private interface Dao {
         AppDatabase.Executable loadAllRecord = AppDatabase.getInstance().getExecutable("SELECT * FROM Book JOIN BookNA ON BookNA.bookId=Book.id");
+        AppDatabase.Executable continueLoan = AppDatabase.getInstance().getExecutable("UPDATE BookNA SET endDate = DATE_ADD(endDate, INTERVAL 30 DAY) WHERE BookNA.bookId = ?");
     }
 }
