@@ -205,9 +205,9 @@ public class UserDao {
     }
 
     public static boolean updateUserReturnCount(int userId) {
-        synchronized (Dao.increaseUserReturnCount) {
+        synchronized (Dao.decreaseUserBorrowCount) {
             try {
-                return Dao.increaseUserReturnCount.setParams(userId).update() == 1;
+                return Dao.decreaseUserBorrowCount.setParams(userId).update() == 1;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -281,7 +281,7 @@ public class UserDao {
     private interface Dao {
         AppDatabase.Executable loadAllReader = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE type = 0");
         AppDatabase.Executable increaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount+1 WHERE id=?");
-        AppDatabase.Executable increaseUserReturnCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount-1 WHERE id=?");
+        AppDatabase.Executable decreaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount-1 WHERE id=?");
         AppDatabase.Executable getName = AppDatabase.getInstance().getExecutable("SELECT name FROM User WHERE name=?");
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");

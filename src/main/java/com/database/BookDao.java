@@ -52,10 +52,12 @@ public class BookDao {
 
     public static boolean reportProblem(int userId, int bookId, BookRecord.ReportStatus status) {
         try {
-            AppDatabase.Executable deleteBookNA = AppDatabase.getInstance().getExecutable(
-                    "DELETE FROM BookNA WHERE bookId = ?");
-            synchronized (deleteBookNA) {
-                deleteBookNA.setParams(bookId).update();
+            synchronized (Dao.deleteBookNA) {
+                Dao.deleteBookNA.setParams(bookId).update();
+            }
+
+            synchronized (Dao.decreaseUserBorrowCount) {
+                Dao.decreaseUserBorrowCount.setParams(userId).update();
             }
 
             AppDatabase.Executable updateStatus;
@@ -292,12 +294,10 @@ public class BookDao {
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
         AppDatabase.Executable findBookNAByBook = AppDatabase.getInstance().getExecutable("SELECT * FROM BookNA WHERE bookId = ?");
-        AppDatabase.Executable updateBookInfo = AppDatabase.getInstance().getExecutable(
-                "UPDATE Book SET name=?, categoryId=?,  price=?, comment=? WHERE id=?"
-        );
-        AppDatabase.Executable addBook = AppDatabase.getInstance().getExecutable(
-                "INSERT INTO Book(name, categoryId, price, comment, flag) VALUES (?, ?, ?, ?, ?)"
-        );
+        AppDatabase.Executable updateBookInfo = AppDatabase.getInstance().getExecutable("UPDATE Book SET name=?, categoryId=?,  price=?, comment=? WHERE id=?");
+        AppDatabase.Executable addBook = AppDatabase.getInstance().getExecutable("INSERT INTO Book(name, categoryId, price, comment, flag) VALUES (?, ?, ?, ?, ?)");
         AppDatabase.Executable getLastInsertId = AppDatabase.getInstance().getExecutable("SELECT LAST_INSERT_ID()");
+        AppDatabase.Executable deleteBookNA = AppDatabase.getInstance().getExecutable("DELETE FROM BookNA WHERE bookId = ?");
+        AppDatabase.Executable decreaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount-1 WHERE id=?");
     }
 }
