@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.IOException;
+import java.util.Arrays;
 
 @WebServlet("/admin/addBook")
 public class addBookServlet extends HttpServlet {
@@ -22,6 +23,7 @@ public class addBookServlet extends HttpServlet {
             String bookName = request.getParameter("bookName");
             String categoryIdStr = request.getParameter("categoryId");
             String priceStr = request.getParameter("price");
+            String keyword  = request.getParameter("keyword");
             String comment = request.getParameter("comment");
 
             // 简单验证
@@ -50,8 +52,6 @@ public class addBookServlet extends HttpServlet {
                 return;
             }
 
-
-
             // 创建书籍对象并填充数据
             Book book = new Book();
             book.name = bookName;
@@ -72,6 +72,14 @@ public class addBookServlet extends HttpServlet {
 
             // 插入成功，获取新书籍ID
             int newBookId = book.id;
+
+            if (keyword != null && !keyword.isEmpty()) {
+                keyword = keyword.trim();
+                if (!keyword.isEmpty()) {
+                    String[] kws = keyword.split("\\s+");
+                    BookDao.addBookKeywords(book.id, Arrays.asList(kws));
+                }
+            }
 
             // 跳转到管理页面并提示成功
             session.setAttribute("errorMsg", "书籍添加成功！书籍ID：" + newBookId);

@@ -105,6 +105,8 @@ public class BookDao {
                 sql.append("id in (SELECT BookId FROM BookKeyword WHERE keyId IN (");
                 sql.append( kwSet);
                 sql.append("))");
+            } else {
+                return books;
             }
         }
         String exe_sql = "SELECT * FROM Book";
@@ -135,6 +137,7 @@ public class BookDao {
         book.flag = resultSet.getInt("flag");
         book.price = resultSet.getDouble("price");
         book.comment = resultSet.getString("comment");
+        book.keywords = findKeywords(book.id);
         return book;
     }
 
@@ -189,13 +192,7 @@ public class BookDao {
             }
             ResultSet rs = executable.query();
             while (rs.next()) {
-                Book book = new Book();
-                book.id = rs.getInt("id");
-                book.name = rs.getString("name");
-                book.category = Book.Category.getCategory(rs.getInt("categoryId"));
-                book.flag = rs.getInt("flag");
-                book.price = rs.getDouble("price");
-                book.comment = rs.getString("comment");
+                Book book = fromResultSet(rs);
 
                 if (book.flag > 0) {
                     // 使用接口调用 BookNA 查询
@@ -236,7 +233,10 @@ public class BookDao {
                         book.comment,
                         book.id
                 );
-                return Dao.updateBookInfo.update()==1;
+                boolean res = Dao.updateBookInfo.update()==1;
+                Dao.dropBookKeyword.setParams(book.id).update();
+                addBookKeywords(book.id, book.keywords);
+                return res;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -285,7 +285,67 @@ public class BookDao {
         return false;
     }
 
+    public static boolean addBookKeywords(int bookId, List<String> keywords) {
+        try {
+            synchronized (Dao.addKeyword) {
+                int count = 0;
+                List<Integer> kwIds = new ArrayList<>();
+                for (String keyword : keywords) {
+                    if (Dao.addKeyword.setParams(keyword, keyword).update() == 1) {
+                        ResultSet rs = Dao.getLastInsertId.query();
+                        if (rs.next()) {
+                            kwIds.add(rs.getInt(1));
+                        }
+                    } else {
+                        ResultSet rs = Dao.findIdsByKeyword.setParams(keyword).query();
+                        if (rs.next()) {
+                            kwIds.add(rs.getInt(1));
+                        }
+                    }
+                }
+                for (int kwId : kwIds) {
+                    if (Dao.addBookKeyword.setParams(bookId, kwId).update() != 1) {
+                        return false;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static List<String> findKeywords(int bookId) {
+        List<String> keywords = new ArrayList<>();
+        try {
+            synchronized (Dao.findKeywords) {
+                ResultSet rs = Dao.findKeywords.setParams(bookId).query();
+                while (rs.next()) {
+                    keywords.add(rs.getString("keyword"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return keywords;
+    }
+
+    public static  int dropBookKKeyword(int bookId) {
+        try {
+            synchronized (Dao.dropBookKeyword) {
+                return Dao.dropBookKeyword.setParams(bookId).update();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     private interface Dao {
+        AppDatabase.Executable dropBookKeyword = AppDatabase.getInstance().getExecutable("DELETE FROM BookKeyword WHERE bookId = ?");
+        AppDatabase.Executable findKeywords = AppDatabase.getInstance().getExecutable("SELECT * FROM keyword JOIN bookKeyword ON keyId = keyword.id JOIN book ON bookId=book.id WHERE bookId = ?");
+        AppDatabase.Executable addBookKeyword = AppDatabase.getInstance().getExecutable("INSERT INTO BookKeyword VALUES(?,?)");
+        AppDatabase.Executable addKeyword = AppDatabase.getInstance().getExecutable("INSERT INTO Keyword(keyword) SELECT ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Keyword WHERE keyword.keyword=?) ");
         AppDatabase.Executable findIdsByKeyword = AppDatabase.getInstance().getExecutable("SELECT id FROM keyword WHERE keyword.keyword like CONCAT('%',?,'%')");
         AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
         AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = ? WHERE id = ?");

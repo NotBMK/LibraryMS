@@ -214,6 +214,7 @@
       <th>当前状态</th>
       <th>借阅期限</th>
       <th>价格</th>
+      <th>关键词</th>
       <th>备注信息</th>
       <th>操作</th> <%-- 新增操作列 --%>
     </tr>
@@ -231,6 +232,7 @@
       <td><%= book.getFlagDisplay() %></td>
       <td><%= book.getLoanPeriodDisplay() %></td>
       <td><%= book.price %> 元</td>
+      <td><%= book.keywords.isEmpty() ? "" : String.join(" ", book.keywords)%></td>
       <td><%= book.comment!= null ? book.comment : "" %></td>
 
       <td style="white-space: nowrap;">

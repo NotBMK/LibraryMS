@@ -242,6 +242,11 @@
         </div>
 
         <div class="form-group">
+            <label for="keyword">关键词</label>
+            <textarea class="form-control" id="keyword" name="keyword"></textarea>
+        </div>
+
+        <div class="form-group">
             <label for="comment">备注信息</label>
             <textarea class="form-control" id="comment" name="comment" rows="4"></textarea>
         </div>

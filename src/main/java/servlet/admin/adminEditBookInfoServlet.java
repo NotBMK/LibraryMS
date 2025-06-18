@@ -7,6 +7,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @WebServlet("/admin/adminEditBookInfo")
 public class adminEditBookInfoServlet extends HttpServlet {
@@ -31,6 +32,8 @@ public class adminEditBookInfoServlet extends HttpServlet {
             int categoryId = Integer.parseInt(request.getParameter("categoryId"));
             double price = Double.parseDouble(request.getParameter("price"));
             String comment = request.getParameter("comment");
+            String keyword = request.getParameter("keyword");
+
 
             // 构建 Book 对象
             Book book = new Book();
@@ -39,7 +42,12 @@ public class adminEditBookInfoServlet extends HttpServlet {
             book.category = Book.Category.getCategory(categoryId); // 转换为枚举类型
             book.price = price;
             book.comment = comment;
-
+            if (keyword != null && !keyword.isEmpty()) {
+                keyword = keyword.trim();
+                if (!keyword.isEmpty()) {
+                    book.keywords = Arrays.asList(keyword.split("\\s+"));
+                }
+            }
 
             // 更新数据库
             boolean success = BookDao.updateBookInfo(book);

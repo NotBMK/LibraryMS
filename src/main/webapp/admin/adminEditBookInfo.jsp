@@ -208,6 +208,11 @@
 <%--    </div>--%>
 
     <div class="form-group">
+      <label for="keyword">关键词</label>
+      <textarea class="form-control" id="keyword" name="keyword" ><%= targetBook.keywords.isEmpty() ? "" : String.join(" ", targetBook.keywords)   %></textarea>
+    </div>
+
+    <div class="form-group">
       <label for="price">价格</label>
       <input type="number" step="0.01" class="form-control" id="price" name="price" value="<%= targetBook.price %>" required>
     </div>

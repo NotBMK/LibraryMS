@@ -2,96 +2,356 @@
 <html>
 <head>
     <title>图书管理信息系统 - 用户注册</title>
-    <!-- 添加CSS样式 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            background-color: #E3E3E3;
-            font-family: Arial, sans-serif;
-        }
-        .form-container {
-            width: 300px;
-            margin: 50px auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        td {
-            padding: 8px;
-        }
-        .role-selector {
-            margin: 10px 0;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 5px;
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
         }
-        input[type="submit"], input[type="reset"] {
-            margin: 5px;
-            padding: 5px 15px;
+
+        /* 自定义变量 */
+        :root {
+            --primary: #818CF8;
+            --secondary: #A5B4FC;
+            --accent: #C7D2FE;
+            --neutral: rgba(255, 255, 255, 0.7);
+            --neutral-dark: rgba(229, 229, 229, 0.7);
+            --text-dark: #333;
+            --text-medium: #666;
+            --text-light: #999;
+            --border-light: #e0e0e0;
         }
-        .button-container {
+
+        /* 全局样式 */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #e0e7ff, #f3e8ff, #dbeafe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            color: var(--text-dark);
+        }
+
+        /* 背景装饰元素 */
+        .bg-decoration {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(3rem);
+        }
+
+        .bg-circle-1 {
+            top: -4rem;
+            right: -4rem;
+            width: 20rem;
+            height: 20rem;
+            background: rgba(129, 140, 248, 0.1);
+        }
+
+        .bg-circle-2 {
+            top: 50%;
+            left: -2rem;
+            width: 15rem;
+            height: 15rem;
+            background: rgba(165, 180, 252, 0.1);
+        }
+
+        .bg-circle-3 {
+            bottom: -2rem;
+            right: 25%;
+            width: 18rem;
+            height: 18rem;
+            background: rgba(199, 210, 254, 0.1);
+        }
+
+        /* 主容器 */
+        .main-container {
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* 表单卡片 */
+        .form-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(129, 140, 248, 0.1),
+            0 8px 10px -6px rgba(129, 140, 248, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: scale(1.01);
+        }
+
+        /* 头部区域 */
+        .form-header {
+            background: linear-gradient(to right, rgba(129, 140, 248, 0.3), rgba(165, 180, 252, 0.3));
+            padding: 1.5rem;
             text-align: center;
-            margin-top: 10px;
+            border-bottom: 1px solid var(--border-light);
         }
-        .register-link {
+
+        .form-header h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-medium);
+        }
+
+        .header-icon {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+
+        /* 表单区域 */
+        .form-content {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-input {
+            position: relative;
+        }
+
+        .form-input input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.125rem rgba(129, 140, 248, 0.3);
+        }
+
+        .form-input input::placeholder {
+            color: var(--text-light);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* 性别选择 */
+        .gender-select {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.25rem 0;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .gender-option input {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+
+        /* 按钮区域 */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .button-group {
+                flex-direction: row;
+            }
+        }
+
+        .btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-0.125rem);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* 登录链接 */
+        .login-link {
+            margin-top: 1.5rem;
             text-align: center;
-            margin-top: 15px;
+            color: var(--text-medium);
         }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            color: var(--secondary);
+        }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 0.875rem;
+        }
+
+        /* 输入框动画 */
+        .form-input:focus-within {
+            transform: scale(1.01);
+            transition: transform 0.2s ease;
+        }
+
+        /* 错误消息 */
         .error-message {
-            color: red;
+            color: #ef4444;
+            background-color: #fee2e2;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
             text-align: center;
-            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-<div class="form-container">
-    <%-- 显示错误消息 --%>
-    <% if (request.getAttribute("error") != null) { %>
-    <div class="error-message"><%= request.getAttribute("error") %></div>
-    <% } %>
-
-    <form action="registerServlet" method="post">
-        <table>
-            <caption>用户注册</caption>
-            <tr>
-                <td>用户名：</td>
-                <td><input type="text" name="name" size="20" required/></td>
-            </tr>
-            <tr>
-                <td>性别：</td>
-                <td>
-                    <input type="radio" name="gender" value="M" id="male" checked>
-                    <label for="male">男</label>
-                    <input type="radio" name="gender" value="F" id="female">
-                    <label for="female">女</label>
-                </td>
-            </tr>
-            <tr>
-                <td>密码：</td>
-                <td><input type="password" name="pass" size="20" required/></td>
-            </tr>
-            <tr>
-                <td>确认密码：</td>
-                <td><input type="password" name="confirmPass" size="20" required/></td>
-            </tr>
-            <tr>
-                <td colspan="2" class="button-container">
-                    <input type="submit" value="注册"/>
-                    <input type="reset" value="重置"/>
-                </td>
-            </tr>
-        </table>
-    </form>
-    <div class="register-link">
-        已有账号？<a href="login.jsp">点击登录</a>
-    </div>
+<!-- 背景装饰元素 -->
+<div class="bg-decoration">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
 </div>
+
+<!-- 主容器 -->
+<div class="main-container">
+    <!-- 表单卡片 -->
+    <div class="form-card">
+        <!-- 头部区域 -->
+        <div class="form-header">
+            <div class="flex items-center justify-center mb-0.5">
+                <h1>图书管理系统</h1>
+            </div>
+            <p>创建您的账户</p>
+        </div>
+
+        <!-- 表单区域 -->
+        <div class="form-content">
+            <!-- 显示错误消息 -->
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="error-message"><%= request.getAttribute("error") %></div>
+            <% } %>
+
+            <form action="registerServlet" method="post">
+                <!-- 用户名输入 -->
+                <div class="form-group form-input">
+                    <span class="input-icon">👤</span>
+                    <input type="text" name="name" placeholder="请输入用户名" required>
+                </div>
+
+                <!-- 性别选择 -->
+                <div class="gender-select">
+                    <div class="gender-option">
+                        <input type="radio" name="gender" value="M" id="male" checked>
+                        <label for="male">男</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" name="gender" value="F" id="female">
+                        <label for="female">女</label>
+                    </div>
+                </div>
+
+                <!-- 密码输入 -->
+                <div class="form-group form-input">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="pass" placeholder="请输入密码" required>
+                </div>
+
+                <!-- 确认密码输入 -->
+                <div class="form-group form-input">
+                    <span class="input-icon">🔐</span>
+                    <input type="password" name="confirmPass" placeholder="请再次输入密码" required>
+                </div>
+
+                <!-- 按钮区域 -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        注册
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                        重置
+                    </button>
+                </div>
+            </form>
+
+            <!-- 登录链接 -->
+            <div class="login-link">
+                <p>
+                    已有账号？ <a href="login.jsp">
+                    立即登录</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    // 表单输入框获取焦点时的效果
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('scale-101');
+        });
+
+        input.addEventListener('blur', () => {
+            input.parentElement.classList.remove('scale-101');
+        });
+    });
+</script>
 </body>
 </html>

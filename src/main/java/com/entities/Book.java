@@ -1,4 +1,5 @@
 package com.entities;
+import java.util.List;
 
 public class Book {
     public static final int GOOD = -1;
@@ -12,6 +13,7 @@ public class Book {
     public double price;
     public String comment;
     public int loanPeriod;
+    public List<String> keywords;
 
     public enum Category {
         UNKNOWN("未知"),
@@ -70,5 +72,7 @@ public class Book {
             return "暂不可用";
         }
     }
+
+
 
 }
