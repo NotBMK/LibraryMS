@@ -38,6 +38,21 @@ public class BookRecordDao {
         return false;
     }
 
+    public static List<BookRecord> getBorrowedBooksByUserId(int userId) {
+        List<BookRecord> books = new ArrayList<>();
+        try {
+            synchronized (Dao.findByUserId) {
+                ResultSet resultSet = Dao.findByUserId.setParams(userId).query();
+                while (resultSet.next()) {
+                    books.add(fromResultSet(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
     public static BookRecord fromResultSet(ResultSet resultSet) throws SQLException {
         BookRecord bookRecord = new BookRecord();
         bookRecord.book = BookDao.fromResultSet(resultSet);
@@ -49,5 +64,6 @@ public class BookRecordDao {
     private interface Dao {
         AppDatabase.Executable loadAllRecord = AppDatabase.getInstance().getExecutable("SELECT * FROM Book JOIN BookNA ON BookNA.bookId=Book.id");
         AppDatabase.Executable continueLoan = AppDatabase.getInstance().getExecutable("UPDATE BookNA SET endDate = DATE_ADD(endDate, INTERVAL 30 DAY) WHERE BookNA.bookId = ?");
+        AppDatabase.Executable findByUserId = AppDatabase.getInstance().getExecutable("SELECT * FROM Book JOIN BookNA ON BookNA.bookId=Book.id WHERE book.flag = ?");
     }
 }

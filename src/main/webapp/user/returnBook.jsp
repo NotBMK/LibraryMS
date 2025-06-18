@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.entities.Book" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.entities.BookRecord" %>
+<%@ page import="com.database.BookRecordDao" %>
 <html>
 <head>
     <title>图书管理信息系统 - 图书归还</title>
@@ -65,20 +67,6 @@
 
         .user-menu a:hover {
             background-color: #f0f0f0;
-        }
-
-        .search-area {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
         }
 
         .search-form input {
@@ -233,10 +221,26 @@
                 }
 
                 if (confirm(`确定要归还选中的 ${checkedBooks.length} 本图书吗？`)) {
-                    // 这里应该是AJAX请求后端处理借还书逻辑
-                    alert('还书成功！');
-                    // 清空已选图书
-                    checkedBooks.forEach(book => book.checked = false);
+                    // 获取所有选中的图书ID
+                    const bookIds = Array.from(checkedBooks).map(book => book.value);
+
+                    // 发送AJAX请求
+                    fetch('<%= request.getContextPath() %>/user/returnBook', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'bookId=' + bookIds.join(',')
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('还书成功！');
+                                location.reload(); // 刷新页面更新列表
+                            } else {
+                                alert('还书失败，请重试！');
+                            }
+                        });
                 }
             });
 
@@ -276,7 +280,7 @@
     </div>
 
     <%
-        List<Book> books = (List<Book>) request.getAttribute("borrowedBooks");
+        List<BookRecord> books = (List<BookRecord>) request.getAttribute("borrowedBooks");
         if (books != null && !books.isEmpty()) {
     %>
     <div id="bookList" class="book-list">
@@ -287,21 +291,37 @@
                 <th>图书ID</th>
                 <th>图书名称</th>
                 <th>分类</th>
-                <th>状态</th>
                 <th>备注</th>
+                <th>价格</th>
+                <th>借书时间</th>
+                <th>还书期限</th>
+                <th>逾期天数</th>
+                <th>需缴费</th>
             </tr>
             </thead>
             <tbody>
             <%
-                for (Book book : books) {
+                for (BookRecord bookRecord : books) {
             %>
             <tr>
-                <td><input type="checkbox" name="book" value="<%= book.id %>"></td>
-                <td><%= book.id %></td>
-                <td><%= book.name %></td>
-                <td><%= book.category %></td>
-                <td><%= book.flag == -1 ? "可借阅" : "不可借阅" %></td>
-                <td><%= book.comment %></td>
+                <td><input type="checkbox" name="book" value="<%= bookRecord.book.id %>"></td>
+                <td><%= bookRecord.book.id %></td>
+                <td><%= bookRecord.book.name %></td>
+                <td><%= bookRecord.book.category %></td>
+                <td><%= bookRecord.book.comment %></td>
+                <td><%= bookRecord.book.price %></td>
+                <td><%= bookRecord.startDate %></td>
+                <td><%= bookRecord.endDate %></td>
+                <td>
+                    <% if (bookRecord.getOverdueDays() > 0) { %>
+                    <span style="color:red"><%= bookRecord.getOverdueDays() %> 天</span>
+                    <% } else { %>
+                    0
+                    <% } %>
+                </td>
+                <td>
+                    <%= String.format("%.2f", bookRecord.calculateFine()) %>
+                </td>
             </tr>
             <%
                 }

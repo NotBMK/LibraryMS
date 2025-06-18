@@ -2,12 +2,15 @@ package com.database;
 
 import com.entities.Action;
 import com.entities.Book;
+import com.entities.BookRecord;
+
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class BookDao {
@@ -28,6 +31,49 @@ public class BookDao {
             return true;
         }
         return false;
+    }
+
+    public static boolean returnBook(int userId, int bookId) {
+        boolean res = false;
+        try {
+            synchronized (Dao.removeReturnBook) {
+                res = Dao.removeReturnBook.setParams(bookId).update() == 1 && Dao.returnBook.setParams(bookId).update() == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (res && UserDao.updateUserReturnCount(userId)) {
+            ActionDao.insert(Action.ActType.RETURN_BOOK, userId, bookId, Date.valueOf(LocalDate.now()), null,"");
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean reportProblem(int userId, int bookId, BookRecord.ReportStatus status) {
+        try {
+            AppDatabase.Executable deleteBookNA = AppDatabase.getInstance().getExecutable(
+                    "DELETE FROM BookNA WHERE bookId = ?");
+            synchronized (deleteBookNA) {
+                deleteBookNA.setParams(bookId).update();
+            }
+
+            AppDatabase.Executable updateStatus;
+            if (status == BookRecord.ReportStatus.DAMAGED) {
+                updateStatus = AppDatabase.getInstance().getExecutable(
+                        "UPDATE Book SET flag = -2 WHERE id = ?");
+            } else { // LOST
+                updateStatus = AppDatabase.getInstance().getExecutable(
+                        "UPDATE Book SET flag = -3 WHERE id = ?");
+            }
+
+            synchronized (updateStatus) {
+                return updateStatus.setParams(bookId).update() == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static List<Book> search(String id, String name, List<String> keywords) {
@@ -78,25 +124,6 @@ public class BookDao {
         }
         return books;
     }
-    public static List<Book> getBorrowedBooksByUserId(int userId) {
-        List<Book> books = new ArrayList<>();
-        // SQL 查询获取用户借阅的书籍（未归还）
-        String sql = "SELECT b.* FROM Book b JOIN BookNa bn ON bn.bookId = b.id WHERE b.flag = ?" ;
-
-        try {
-            // 使用 AppDatabase 执行查询
-            AppDatabase.Executable executable = AppDatabase.getInstance().getExecutable(sql);
-            executable.setParams(userId); // 设置用户ID参数
-
-            ResultSet resultSet = executable.query();
-            while (resultSet.next()) {
-                books.add(fromResultSet(resultSet));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return books;
-    }
 
     public static Book fromResultSet(ResultSet resultSet) throws SQLException {
         Book book = new Book();
@@ -111,6 +138,8 @@ public class BookDao {
 
     private static List<Integer> getKeywordIds(List<String> keywords) {
         List<Integer> ids = new ArrayList<>();
+        String cond = String.join(",", Collections.nCopies(keywords.size(), "?"));
+        String sql = "SELECT id FROM keywords WHERE name in (" + cond + ")";
         try {
             synchronized (Dao.findIdsByKeyword) {
                 for (String kw : keywords) {
@@ -258,6 +287,8 @@ public class BookDao {
         AppDatabase.Executable findIdsByKeyword = AppDatabase.getInstance().getExecutable("SELECT id FROM keyword WHERE keyword.keyword like CONCAT('%',?,'%')");
         AppDatabase.Executable insertBorrowBook = AppDatabase.getInstance().getExecutable("INSERT INTO BookNA VALUES(?,NOW(),DATE_ADD(NOW(),INTERVAL ? DAY))");
         AppDatabase.Executable borrowBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = ? WHERE id = ?");
+        AppDatabase.Executable removeReturnBook = AppDatabase.getInstance().getExecutable("DELETE FROM BookNA WHERE bookId = ?");
+        AppDatabase.Executable returnBook = AppDatabase.getInstance().getExecutable("UPDATE Book SET flag = -1 WHERE id = ?");
         AppDatabase.Executable finaByName = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.name like CONCAT('%',?,'%')");
         AppDatabase.Executable findById = AppDatabase.getInstance().getExecutable("SELECT * FROM Book WHERE Book.id = ?");
         AppDatabase.Executable findBookNAByBook = AppDatabase.getInstance().getExecutable("SELECT * FROM BookNA WHERE bookId = ?");

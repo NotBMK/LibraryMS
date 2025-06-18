@@ -234,7 +234,7 @@
             <div class="function-icon">⚠️</div>
             <div class="function-title">意外申报</div>
             <div class="function-desc">报告图书丢失、损坏等意外情况</div>
-            <a href="reportProblem.jsp" class="function-btn">申报意外</a>
+            <a href="<%= request.getContextPath() %>/user/reportProblem" class="function-btn">申报意外</a>
         </div>
     </div>
 

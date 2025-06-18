@@ -204,6 +204,53 @@ public class UserDao {
         return false;
     }
 
+    public static boolean updateUserReturnCount(int userId) {
+        synchronized (Dao.increaseUserReturnCount) {
+            try {
+                return Dao.increaseUserReturnCount.setParams(userId).update() == 1;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean addUserFine(int userId, double amount) {
+        synchronized (Dao.addUserFine) {
+            try {
+                return Dao.addUserFine.setParams(amount, userId).update() == 1;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static double getUserFine(int userId) {
+        try {
+            synchronized (Dao.getUserFine) {
+                ResultSet rs = Dao.getUserFine.setParams(userId).query();
+                if (rs.next()) {
+                    return rs.getDouble("fine");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static boolean payFine(int userId) {
+        try {
+            synchronized (Dao.payFine) {
+                return Dao.payFine.setParams(userId).update() == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static List<User> loadAllReader() {
         List<User> userList = new ArrayList<>();
         try {
@@ -234,6 +281,7 @@ public class UserDao {
     private interface Dao {
         AppDatabase.Executable loadAllReader = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE type = 0");
         AppDatabase.Executable increaseUserBorrowCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount+1 WHERE id=?");
+        AppDatabase.Executable increaseUserReturnCount = AppDatabase.getInstance().getExecutable("UPDATE User SET borrowCount=borrowCount-1 WHERE id=?");
         AppDatabase.Executable getName = AppDatabase.getInstance().getExecutable("SELECT name FROM User WHERE name=?");
         AppDatabase.Executable login = AppDatabase.getInstance().getExecutable("SELECT * FROM User WHERE name=?");
         AppDatabase.Executable register = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender) VALUES (?, ?, ?, ?)");
@@ -242,5 +290,8 @@ public class UserDao {
         AppDatabase.Executable updatePassword = AppDatabase.getInstance().getExecutable("UPDATE User SET pass=? WHERE id=?");
         AppDatabase.Executable adminRegister = AppDatabase.getInstance().getExecutable("INSERT INTO User(name, pass, type, gender, comment) VALUES (?, ?, ?, ?,?)");
         AppDatabase.Executable getLastInsertId = AppDatabase.getInstance().getExecutable("SELECT LAST_INSERT_ID()");
+        AppDatabase.Executable addUserFine = AppDatabase.getInstance().getExecutable("UPDATE User SET fine = fine + ? WHERE id = ?");
+        AppDatabase.Executable getUserFine = AppDatabase.getInstance().getExecutable("SELECT fine FROM User WHERE id = ?");
+        AppDatabase.Executable payFine = AppDatabase.getInstance().getExecutable("UPDATE User SET fine = 0 WHERE id = ?");
     }
 }
