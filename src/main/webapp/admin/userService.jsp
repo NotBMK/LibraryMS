@@ -41,7 +41,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 借书窗口设置
-            const link = document.querySelector(".popup-link");
             const popup = document.getElementById("popup");
             const popupOverlay = document.getElementById("popup-overlay");
             const interestingBookId = document.getElementById("interestingBookId");
@@ -55,17 +54,18 @@
                 popup.style.display = "none";
                 popupOverlay.style.display = "none";
             });
-
-            link.addEventListener('click', function() {
-                popup.style.display = "block";
-                popupOverlay.style.display = "block";
-                const bookInfo = link.dataset.book.split(",");
-                interestingBookId.innerHTML = bookInfo[0];
-                interestingBookName.innerHTML = bookInfo[1];
-                interestingBookCategory.innerHTML = bookInfo[2];
-                interestingBookPrice.innerHTML = bookInfo[4];
-                interestingBookComment.innerHTML = bookInfo[5];
-                document.getElementById("CLBookId").value = bookInfo[0];
+            document.querySelectorAll(".popup-link").forEach(link=>{
+                link.addEventListener('click', function() {
+                    popup.style.display = "block";
+                    popupOverlay.style.display = "block";
+                    const bookInfo = link.dataset.book.split(",");
+                    interestingBookId.innerHTML = bookInfo[0];
+                    interestingBookName.innerHTML = bookInfo[1];
+                    interestingBookCategory.innerHTML = bookInfo[2];
+                    interestingBookPrice.innerHTML = bookInfo[4];
+                    interestingBookComment.innerHTML = bookInfo[5];
+                    document.getElementById("CLBookId").value = bookInfo[0];
+                });
             });
         });
     </script>

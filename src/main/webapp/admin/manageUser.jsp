@@ -6,6 +6,7 @@
 <html>
 <head>
     <title>用户管理</title>
+    <link rel="stylesheet" href="../style/custom_table.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -198,7 +199,7 @@
 
 
     <%-- 查询结果展示 --%>
-    <table class="user-table">
+    <table class="custom-table">
         <thead>
         <tr>
             <th>用户名</th>
