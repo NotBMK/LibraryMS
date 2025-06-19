@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS User(
     borrowCount int DEFAULT 0,
     loanPeriod int DEFAULT 30,
     comment varchar(256),
-    fine int DEFAULT 0
+    fine float DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS BookCategory(
