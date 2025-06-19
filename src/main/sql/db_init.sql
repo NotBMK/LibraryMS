@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS BookCategory(
 );
 
 CREATE TABLE IF NOT EXISTS Keyword(
-    id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    id int PRIMARY KEY AUTO_INCREMENT,
     keyword varchar(32) NOT NULL
 );
 
@@ -30,15 +30,16 @@ CREATE TABLE IF NOT EXISTS Book(
     price double NOT NULL DEFAULT 0,
     categoryId int NOT NULL,
     flag int DEFAULT -1,
-    comment varchar(256),
-    FOREIGN KEY (categoryId) REFERENCES BookCategory(id) ON UPDATE CASCADE
+    comment varchar(256)
 );
 
 CREATE TABLE IF NOT EXISTS BookKeyword(
     bookId int NOT NULL,
     keyId int NOT NULL,
-    FOREIGN KEY (bookId) REFERENCES Book(id) ON UPDATE CASCADE,
-    FOREIGN KEY (keyId) REFERENCES Keyword(id) ON UPDATE CASCADE
+    FOREIGN KEY (bookId) REFERENCES Book(id)
+        ON UPDATE CASCADE,
+    FOREIGN KEY (keyId) REFERENCES Keyword(id)
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS BookNA(

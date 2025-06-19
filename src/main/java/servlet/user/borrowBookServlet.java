@@ -32,7 +32,8 @@ public class borrowBookServlet extends HttpServlet {
         request.getRequestDispatcher("/user/borrowBook.jsp").forward(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String name = request.getParameter("bookName");
         String id = request.getParameter("bookId");
 
