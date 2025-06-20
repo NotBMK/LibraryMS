@@ -11,3 +11,5 @@
 
 ## Tomcat版本
 10.0以上
+
+有时间可能会用Spring Data JPA 重写数据库逻辑（见分支overwrite）
